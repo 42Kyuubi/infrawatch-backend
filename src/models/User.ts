@@ -1,14 +1,14 @@
-export interface Employee{
+export interface User{
   name: string;
   email: string;
   password: string;
-  position: string;
+  role: string;
 }
 
-export interface EmployeeDTO {
+export interface UserDTO {
   id: string;
   name: string;
-  position: string;
+  role: string;
   created_at: string;
   user: {
     id: string;
