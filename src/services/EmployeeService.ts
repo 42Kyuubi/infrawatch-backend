@@ -1,6 +1,6 @@
 import supabase from '../infra/supabase/connect';
 import { Employee, EmployeeDTO } from '../models/Employee';
-import AuthService from './authService';
+import AuthService from './AuthService';
 
 class EmployeeService {
   async create({ name, email, password, position }: Employee): Promise<EmployeeDTO> {

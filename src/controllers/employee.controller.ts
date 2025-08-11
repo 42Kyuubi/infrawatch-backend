@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { employeeSchema } from '../schemas/Employee.schema';
-import EmployeeService from '../services/employeeService';
+import EmployeeService from '../services/EmployeeService';
 
 class EmployeeController {
 
