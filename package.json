@@ -18,15 +18,18 @@
   "homepage": "https://github.com/42Kyuubi/infrawatch-backend#readme",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.54.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
-    "zod": "^4.0.15"
+    "net-snmp": "^3.23.0",
+    "zod": "^4.0.16"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
+    "eslint": "^9.33.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2"
   }

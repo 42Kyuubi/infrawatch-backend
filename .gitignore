@@ -1,7 +1,3 @@
-*.map
-*.d.*
-*.js
-
 # Logs
 logs
 *.log
