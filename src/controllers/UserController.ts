@@ -1,27 +1,22 @@
-import { Request, Response } from 'express'; 
-import { SystemSchema } from '../schemas/systemSchema';
-import SystemService from '../services/SystemService';
+import { Request, Response } from 'express';
+import { userSchema } from '../schemas/UserSchema';
+import UserService from '../services/UserService';
 
-class SystemController {
+class UserController {
 
   async create(req: Request, res: Response): Promise<Response> {
-    const parsed =SystemSchema.safeParse(req.body);
+    const parsed = userSchema.safeParse(req.body);
 
     if (!parsed.success) {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
     }
 
-    const data = {
-        ...parsed.data,
-        owner_user_id:req.user.id
-    }
-    console.log(data);
     try {
-      const system = await SystemService.create(data);
+      const user = await UserService.create(parsed.data);
       return res.status(201).json({
-        message: 'sistema cadastrado com sucesso.',
-        system: system,
+        message: 'Usuario cadastrado com sucesso.',
+        user: user,
       });
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
@@ -30,7 +25,7 @@ class SystemController {
 
   async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const employees = await SystemService.getAll();
+      const employees = await UserService.getAll();
       return res.status(200).json({
         message: 'Lista de User.',
         data: employees,
@@ -43,7 +38,7 @@ class SystemController {
   async getById(req: Request, res: Response): Promise<Response> {
     try {
       const {id} = req.params;
-      const employee = await SystemService.getById(String(id));
+      const employee = await UserService.getById(String(id));
       return res.status(200).json({
         message: 'User.',
         data: employee,
@@ -56,7 +51,7 @@ class SystemController {
   async delete(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      await SystemService.delete(String(id));
+      await UserService.delete(String(id));
       return res.status(200).json({ message: 'User deletado com sucesso.' });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -68,7 +63,7 @@ class SystemController {
       const { id } = req.params;
       const updates = req.body;
 
-      const updatedUser = await SystemService.updatePartial(String(id), updates);
+      const updatedUser = await UserService.updatePartial(String(id), updates);
 
       return res.status(200).json({
         message: 'User atualizado com sucesso.',
@@ -80,4 +75,4 @@ class SystemController {
   }
 }
 
-export default new SystemController();
+export default new UserController();
