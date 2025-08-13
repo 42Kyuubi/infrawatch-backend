@@ -5,7 +5,7 @@
  * The oids are separated between System and Interface, but everything is
  * requested together.
  */
-const snmpOids = new Map<string, string>([
+export const snmpOids = new Map<string, string>([
 	// === System OIDs (MIB-2 systemGroup) ===
 	['systemDescription', '1.3.6.1.2.1.1.1.0'],
 	['name', '1.3.6.1.2.1.1.5.0'],
