@@ -1,0 +1,661 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "API InfraWatch",
+        "description": "API for managing the InfraWatch system.",
+        "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Check API status",
+                "description": "Returns a status message to confirm the API is running.",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "API is online",
+                        "schema": {
+                            "type": "string",
+                            "example": "APi InfraWatch ON..."
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signup": {
+            "post": {
+                "summary": "Register a new user",
+                "description": "Creates a new user in the system. The user is created in both the authentication service and the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User data for registration",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "John Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "format": "email",
+                                    "example": "john.doe@example.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "password123"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "admin"
+                                }
+                            },
+                            "required": ["name", "email", "password", "role"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "username": {
+                                    "type": "string",
+                                    "example": "John Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "john.doe@example.com"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "admin"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error creating user",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "Failed to create user in Auth"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/signin": {
+            "post": {
+                "summary": "Authenticate a user",
+                "description": "Logs in a user with email and password and returns an authentication token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User credentials for login",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "format": "email",
+                                    "example": "user@example.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "password123"
+                                }
+                            },
+                            "required": ["email", "password"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "token": {
+                                    "type": "string",
+                                    "example": "jwt.token.here"
+                                },
+                                "user": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "user@example.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid credentials",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "Invalid login credentials"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "List all users",
+                "description": "Returns a list of all users. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users returned successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "admin"
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "Token inválido ou ausente"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "summary": "Get user by ID",
+                "description": "Returns a single user by their ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the user to retrieve."
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "username": {
+                                    "type": "string",
+                                    "example": "John Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "john.doe@example.com"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "admin"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string",
+                                    "example": "Failed to get user by ID: No rows found"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a user",
+                "description": "Deletes a user by their ID from both the database and the authentication service. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the user to delete."
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Partially update a user",
+                "description": "Updates one or more fields of a user by their ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the user to update."
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The fields to update",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "type": "string",
+                                    "example": "Jane Doe"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "developer"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "username": {
+                                    "type": "string",
+                                    "example": "Jane Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "john.doe@example.com"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "developer"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/systems": {
+            "get": {
+                "summary": "List all systems",
+                "description": "Returns a list of all systems. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of systems returned successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "System A"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Description for system A."
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new system",
+                "description": "Creates a new system. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "System data for creation",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "System B"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Description for system B."
+                                }
+                            },
+                            "required": ["name", "description"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "System created successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "System B"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Description for system B."
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a system",
+                "description": "Deletes a system by its ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system to delete."
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "System deleted successfully"
+                    },
+                    "404": {
+                        "description": "System not found"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Partially update a system",
+                "description": "Updates one or more fields of a system. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system to update."
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The fields to update",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Updated System B"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System updated successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Updated System B"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Description for system B."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "System not found"
+                    }
+                }
+            }
+        },
+        "/systems/{id}": {
+            "get": {
+                "summary": "Get system by ID",
+                "description": "Returns a single system by its ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system to retrieve."
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "System A"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Description for system A."
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "System not found"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+        }
+    }
+}

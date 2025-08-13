@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { signUpSchema } from '../schemas/signUp.schema';
-import { signInSchema } from '../schemas/signIn.schema';
+import { signUpSchema } from '../schemas/SignUpSchema';
+import { signInSchema } from '../schemas/SignInSchema';
 import AuthService from '../services/AuthService';
 
 class AuthController {
