@@ -1,4 +1,4 @@
-import {snmpOids} from "./OIDS.ts";
+import {snmpOids} from "./OIDs";
 
 /**
  * SNMPService class
@@ -7,7 +7,7 @@ import {snmpOids} from "./OIDS.ts";
  */
 export class SNMPService {
 	private static instance: SNMPService;
-	private snmp: Any;
+	private snmp: any;
 
 	/**
 	 * @constructor
@@ -15,7 +15,7 @@ export class SNMPService {
 	 * @private
 	 */
 	private constructor() {
-		this.snmp = requires("net-snmp");
+		this.snmp = require("net-snmp");
 	}
 
 	/**
@@ -23,29 +23,29 @@ export class SNMPService {
 	 * @static
 	 */
 	public static getInstance(): SNMPService {
-		if (!instance)
-			instance = new SNMPService
-		return (instance);
+		if (!this.instance)
+			this.instance = new SNMPService();
+		return (this.instance);
 	}
 
 	/**
 	 * makes SNMP requests
 	 * @param address IP address of the target device
 	 */
-	public async getData(address: string){
-		let session = snmp.createSession(address, "public");
+	public async getData(address: string): Promise<void> {
+		let session = this.snmp.createSession(address, "public");
 		let oids = Array.from(snmpOids.keys());
 
-		session.get(oids, function (error, varbinds){
+		session.get(oids, (error: any, varbinds: any) =>{
 			if (error)
 				console.error(error);
 			else{
 				for (let i = 0; i < varbinds.length; i++)
 				{
-					if (snmp.isVarbindError(varbinds[i]))
-						console.error(snmp.varbindError(varbind[i]));
+					if (this.snmp.isVarbindError(varbinds[i]))
+						console.error(this.snmp.varbindError(varbinds[i]));
 					else
-						console.log(`${varbind[i].oid} = ${varbind[i].value}`);
+						console.log(`${varbinds[i].oid} = ${varbinds[i].value}`);
 				}
 			}
 			session.close();
@@ -53,7 +53,7 @@ export class SNMPService {
 
 
 		// TODO place anywhere else
-		session.trap(snmp.TrapType.LinkDown, function (error){
+		session.trap(this.snmp.TrapType.LinkDown, function (error: any){
 			if (error)
 				console.error(error)
 		});
