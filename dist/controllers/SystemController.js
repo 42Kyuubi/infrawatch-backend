@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const SystemSchema_1 = require("../schemas/SystemSchema");
+const systemSchema_1 = require("../schemas/systemSchema");
 const SystemService_1 = __importDefault(require("../services/SystemService"));
 class SystemController {
     async create(req, res) {
-        const parsed = SystemSchema_1.SystemSchema.safeParse(req.body);
+        const parsed = systemSchema_1.SystemSchema.safeParse(req.body);
         if (!parsed.success) {
             const errors = parsed.error.format();
             return res.status(400).json({ errors });

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'; 
-import { SystemSchema } from '../schemas/SystemSchema';
+import { SystemSchema } from '../schemas/systemSchema';
 import SystemService from '../services/SystemService';
 
 class SystemController {
