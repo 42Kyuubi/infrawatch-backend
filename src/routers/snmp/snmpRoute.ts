@@ -1,23 +1,28 @@
+import {Router} from "express";
 import routers from "../index";
 import {SNMPService} from "../../services/snmp/SNMPService";
+
+const snmpRoute = Router();
+
 /**
  * SNMP route
  *
  * It receives the target's IP address as parameter
  */
 
-routers.get("snmp/:ip", (req, res) => {
+snmpRoute.get("/:ip", (req, res) => {
 	const ip = req.params.ip;
 	const ipRegex = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
 	if (!ipRegex.test(ip))
-		return (res.status(404).send("Invalid ip address"));
+		return (res.status(400).json("Invalid ip address"));
 	SNMPService.getInstance().getData(ip)
-		.then((instance) => {
-			console.log("Get Data Success" + instance);
+		.then((map) => {
+			console.log("Get Data Success!");
+			res.status(200).json(JSON.stringify(map));
 		})
 		.catch((err) => {
-			console.log("Get Data Error: " + err);
+			res.status(500).json("Error Getting Device's  Data: " + err);
 		});
-	res.status(200).send(`check console for ${ip} data`);
 });
 
+export default snmpRoute;

@@ -31,10 +31,12 @@ export class SNMPService {
 	/**
 	 * makes SNMP requests
 	 * @param address IP address of the target device
+	 * @returns {Promise<Map<string, string>>} a map with all collected details
 	 */
-	public async getData(address: string): Promise<void> {
+	public async getData(address: string): Promise<Map<string, string>> {
 		let session = this.snmp.createSession(address, "public");
-		let oids = Array.from(snmpOids.keys());
+		let oids = ["1.3.6.1.2.1.1.5.0", "1.3.6.1.2.1.1.6.0"]; //Array.from(snmpOids.keys());
+		let map = new Map<string, string>();
 
 		session.get(oids, (error: any, varbinds: any) =>{
 			if (error)
@@ -44,8 +46,11 @@ export class SNMPService {
 				{
 					if (this.snmp.isVarbindError(varbinds[i]))
 						console.error(this.snmp.varbindError(varbinds[i]));
-					else
+					else {
 						console.log(`${varbinds[i].oid} = ${varbinds[i].value}`);
+						// TODO make a more human-friendly map
+						map.set(varbinds[i].oid, varbinds[i].value);
+					}
 				}
 			}
 			session.close();
@@ -57,5 +62,7 @@ export class SNMPService {
 			if (error)
 				console.error(error)
 		});
+
+		return (map);
 	}
 }
