@@ -32,7 +32,7 @@ class SystemController {
     try {
       const employees = await SystemService.getAll();
       return res.status(200).json({
-        message: 'Lista de User.',
+        message: 'Lista de Sistemas.',
         data: employees,
       });
     } catch (err: any) {
@@ -43,7 +43,7 @@ class SystemController {
   async getById(req: Request, res: Response): Promise<Response> {
     try {
       const {id} = req.params;
-      const employee = await SystemService.getById(String(id));
+      const employee = await SystemService.getById(Number(id));
       return res.status(200).json({
         message: 'User.',
         data: employee,
@@ -56,7 +56,7 @@ class SystemController {
   async delete(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      await SystemService.delete(String(id));
+      await SystemService.delete(Number(id));
       return res.status(200).json({ message: 'User deletado com sucesso.' });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -68,7 +68,7 @@ class SystemController {
       const { id } = req.params;
       const updates = req.body;
 
-      const updatedUser = await SystemService.updatePartial(String(id), updates);
+      const updatedUser = await SystemService.updatePartial(Number(id), updates);
 
       return res.status(200).json({
         message: 'User atualizado com sucesso.',

@@ -4,13 +4,9 @@ import systemController from "../controllers/SystemController";
 const systemRouter = Router();
 
 systemRouter.get("/", systemController.getAll);
-
 systemRouter.post("/", systemController.create);
-
 systemRouter.get("/:id",systemController.getById);
-
-systemRouter.delete("/", systemController.delete);
-
-systemRouter.patch("/", systemController.patch);
+systemRouter.delete("/:id", systemController.delete);
+systemRouter.patch("/:id", systemController.patch);
 
 export default systemRouter;

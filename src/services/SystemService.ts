@@ -28,7 +28,7 @@ class SystemService {
     return data as System[];
   }
 
-  async getById(id: string): Promise<System | null> {
+  async getById(id: number): Promise<System | null> {
     const { data, error } = await supabase
       .from(this.table)
       .select('*')
@@ -40,7 +40,7 @@ class SystemService {
     return data as System;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> {
     const { error } = await supabase
       .from(this.table)
       .delete()
@@ -49,7 +49,7 @@ class SystemService {
     if (error) throw new Error(`Failed to delete system: ${error.message}`);
   }
 
-  async updatePartial(id: string, updateData: Partial<System>): Promise<System> {
+  async updatePartial(id: number, updateData: Partial<System>): Promise<System> {
  
     const { data, error } = await supabase
       .from(this.table)
@@ -62,6 +62,7 @@ class SystemService {
 
     return data as System;
   }
+  
 }
 
 export default new SystemService();

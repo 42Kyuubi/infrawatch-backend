@@ -4,7 +4,10 @@ import express from "express";
 import routers from "./routers";
 import cors from "cors"
 import swaggerUI from 'swagger-ui-express';
-import swaggerDocumentation from './swagger.json';
+import swaggerDocumentation from './swagger.json'; 
+import { startScheduler } from "./infra/polling";
+
+startScheduler();
 
 const port = process.env.PORT_DEFAULT || 2001
 const app = express();

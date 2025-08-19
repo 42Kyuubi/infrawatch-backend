@@ -3,13 +3,14 @@ import { User, UserDTO } from '../models/User';
 import { passwordHash } from '../utils/passwordHash';
 import AuthService from './AuthService';
 
-class UserService {
+class UserService
+{
   private table = 'users';
 
-  async create({ name, email, password, role }: User): Promise<UserDTO> {
+  async create({ username, email, password, role }: User): Promise<UserDTO> {
 
     const { userId } = await AuthService.signUp({
-      username: name,
+      username,
       email,
       password,
     });
@@ -20,7 +21,7 @@ class UserService {
       .from(this.table)
       .insert({
         id: userId,
-        username:name,
+        username,
         email,
         password_hash: await passwordHash(password),
         role,

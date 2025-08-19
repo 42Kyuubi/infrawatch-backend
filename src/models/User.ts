@@ -1,6 +1,6 @@
 export interface User{
   id?:string;
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: string;
@@ -8,7 +8,7 @@ export interface User{
 
 export interface UserDTO {
   id: string;
-  name: string;
+  username: string;
   role: string;
   created_at: string;
   user: {
