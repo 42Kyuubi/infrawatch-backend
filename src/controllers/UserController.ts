@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { userSchema } from '../schemas/UserSchema';
 import UserService from '../services/UserService';
+import { User } from '../interface/User';
 
 class UserController {
 
@@ -11,9 +12,14 @@ class UserController {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
     }
+    
+    const userData:User = {
+         company_id:req.user?.company_id,
+          ...parsed.data,
+    }
 
     try {
-      const user = await UserService.create(parsed.data);
+      const user = await UserService.create(userData);
       return res.status(201).json({
         message: 'Usuario cadastrado com sucesso.',
         user: user,
@@ -74,5 +80,5 @@ class UserController {
     }
   }
 }
-
+ 
 export default new UserController();

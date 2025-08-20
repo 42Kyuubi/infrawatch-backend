@@ -1,5 +1,5 @@
 import supabase from '../infra/supabase/connect';
-import { User, UserDTO } from '../models/User';
+import { User, UserDTO } from '../interface/User';
 import { passwordHash } from '../utils/passwordHash';
 import AuthService from './AuthService';
 
@@ -7,7 +7,7 @@ class UserService
 {
   private table = 'users';
 
-  async create({ username, email, password, role }: User): Promise<UserDTO> {
+  async create({ username, email, password, role, company_id }: User): Promise<UserDTO> {
 
     const { userId } = await AuthService.signUp({
       username,
@@ -25,6 +25,8 @@ class UserService
         email,
         password_hash: await passwordHash(password),
         role,
+        company_id,
+        status:'active'
       })
       .select('*')
       .single();

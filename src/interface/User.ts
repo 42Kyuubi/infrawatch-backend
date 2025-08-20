@@ -4,6 +4,7 @@ export interface User{
   email: string;
   password: string;
   role: string;
+  company_id: string | undefined
 }
 
 export interface UserDTO {
@@ -11,6 +12,7 @@ export interface UserDTO {
   username: string;
   role: string;
   created_at: string;
+  status:string;
   user: {
     id: string;
     email: string;
