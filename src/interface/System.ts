@@ -1,10 +1,13 @@
 export interface System {
+  id?:string;
   name: string;
-  owner_user_id:string;
-  type: 'server' | 'network' | 'app';
+  owner_user_id:string | undefined;
+  id_type: string | undefined;
   connection_type: 'api' | 'snmp' | 'ping' | 'webhook';
-  status: 'up' | 'down';
+  status: 'up' | 'maintenance' | 'down';
   criticality_level: number;
   sla_target: number;
   check_interval: number;
+  target: string;
+  company_id:string | undefined
 }

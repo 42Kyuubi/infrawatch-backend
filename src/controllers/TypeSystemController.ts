@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { typeSystemSchema } from '../schemas/SystemSchema';
 import SystemService from '../services/SystemService';
 import TypeSystemService from '../services/TypeSystemService';
+import LogService from '../services/LogService';
 
 class TypeSystemController {
 
@@ -19,6 +20,12 @@ class TypeSystemController {
     } 
     try {
       const typesystem = await TypeSystemService.create(data);
+         new LogService({
+        user_id:req.user?.id,
+        event_type:"create",
+        description:{typesystem},
+        company_id: req.user?.company_id});
+        
       return res.status(201).json({
         message: 'Tipo de sistema cadastrado com sucesso.',
         type_system: typesystem,
@@ -57,7 +64,7 @@ class TypeSystemController {
     try {
       const { id } = req.params;
       await TypeSystemService.delete(String(id));
-      return res.status(200).json({ message: 'tipo de sistema deletado com sucesso.' });
+      return res.status(200).json({ message: 'Tipo de sistema deletado com sucesso.' });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }
