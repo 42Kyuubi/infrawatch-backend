@@ -25,3 +25,6 @@ export const SystemSchema = z.object({
     }),
 });
 
+export const typeSystemSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório")
+});

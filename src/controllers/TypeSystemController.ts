@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'; 
-import { SystemSchema } from '../schemas/SystemSchema';
+import { typeSystemSchema } from '../schemas/SystemSchema';
 import SystemService from '../services/SystemService';
+import TypeSystemService from '../services/TypeSystemService';
 
-class SystemController {
+class TypeSystemController {
 
   async create(req: Request, res: Response): Promise<Response> {
-    const parsed =SystemSchema.safeParse(req.body);
+    const parsed =typeSystemSchema.safeParse(req.body);
  
     if (!parsed.success) {
       const errors = parsed.error.format();
@@ -14,14 +15,13 @@ class SystemController {
 
     const data = {
         ...parsed.data,
-        owner_user_id:req.user?.id || ""
-    }
-    console.log(data);
+        company_id:req.user?.company_id || ""
+    } 
     try {
-      const system = await SystemService.create(data);
+      const typesystem = await TypeSystemService.create(data);
       return res.status(201).json({
-        message: 'sistema cadastrado com sucesso.',
-        system: system,
+        message: 'Tipo de sistema cadastrado com sucesso.',
+        type_system: typesystem,
       });
     } catch (err: any) {
       return res.status(400).json({ error: err.message });
@@ -30,10 +30,10 @@ class SystemController {
 
   async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const employees = await SystemService.getAll();
+      const typesystems = await TypeSystemService.getAll();
       return res.status(200).json({
-        message: 'Lista de Sistemas.',
-        data: employees,
+        message: 'Lista de Tipos de Sistemas.',
+        data: typesystems,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -43,10 +43,10 @@ class SystemController {
   async getById(req: Request, res: Response): Promise<Response> {
     try {
       const {id} = req.params;
-      const employee = await SystemService.getById(Number(id));
+      const typesystem = await TypeSystemService.getById(String(id));
       return res.status(200).json({
-        message: 'User.',
-        data: employee,
+        message: 'Tipo de Sistema.',
+        data: typesystem,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -56,8 +56,8 @@ class SystemController {
   async delete(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
-      await SystemService.delete(Number(id));
-      return res.status(200).json({ message: 'User deletado com sucesso.' });
+      await TypeSystemService.delete(String(id));
+      return res.status(200).json({ message: 'tipo de sistema deletado com sucesso.' });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }
@@ -68,11 +68,11 @@ class SystemController {
       const { id } = req.params;
       const updates = req.body;
 
-      const updatedUser = await SystemService.updatePartial(Number(id), updates);
+      const updated = await TypeSystemService.updatePartial(String(id), updates);
 
       return res.status(200).json({
-        message: 'User atualizado com sucesso.',
-        data: updatedUser,
+        message: 'Tipo de Sistema atualizado com sucesso.',
+        data: updated,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -81,4 +81,4 @@ class SystemController {
 
 }
 
-export default new SystemController();
+export default new TypeSystemController();

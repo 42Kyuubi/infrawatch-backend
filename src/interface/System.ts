@@ -8,4 +8,3 @@ export interface System {
   sla_target: number;
   check_interval: number;
 }
-
