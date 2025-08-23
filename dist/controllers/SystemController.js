@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const SystemSchema_1 = require("../schemas/SystemSchema");
 const SystemService_1 = __importDefault(require("../services/SystemService"));
+const LogService_1 = __importDefault(require("../services/LogService"));
 class SystemController {
     async create(req, res) {
         const parsed = SystemSchema_1.SystemSchema.safeParse(req.body);
@@ -13,18 +14,31 @@ class SystemController {
             return res.status(400).json({ errors });
         }
         const data = {
+            owner_user_id: req.user?.id,
+            company_id: req.user?.company_id,
             ...parsed.data,
-            owner_user_id: req.user?.id || ""
         };
-        console.log(data);
         try {
             const system = await SystemService_1.default.create(data);
+            new LogService_1.default({
+                system_id: system.id,
+                user_id: req.user?.id,
+                event_type: "create",
+                description: system,
+                company_id: req.user?.company_id
+            });
             return res.status(201).json({
                 message: 'sistema cadastrado com sucesso.',
                 system: system,
             });
         }
         catch (err) {
+            new LogService_1.default({
+                user_id: req.user?.id,
+                event_type: "error",
+                description: err.message,
+                company_id: req.user?.company_id
+            });
             return res.status(400).json({ error: err.message });
         }
     }
@@ -32,7 +46,7 @@ class SystemController {
         try {
             const employees = await SystemService_1.default.getAll();
             return res.status(200).json({
-                message: 'Lista de User.',
+                message: 'Lista de Sistemas.',
                 data: employees,
             });
         }
@@ -45,7 +59,7 @@ class SystemController {
             const { id } = req.params;
             const employee = await SystemService_1.default.getById(String(id));
             return res.status(200).json({
-                message: 'User.',
+                message: 'Sistema.',
                 data: employee,
             });
         }
@@ -57,9 +71,22 @@ class SystemController {
         try {
             const { id } = req.params;
             await SystemService_1.default.delete(String(id));
-            return res.status(200).json({ message: 'User deletado com sucesso.' });
+            new LogService_1.default({
+                system_id: id,
+                user_id: req.user?.id,
+                event_type: "delete",
+                description: { system_id: id },
+                company_id: req.user?.company_id
+            });
+            return res.status(200).json({ message: 'Sistema deletado com sucesso.' });
         }
         catch (err) {
+            new LogService_1.default({
+                user_id: req.user?.id,
+                event_type: "error",
+                description: err.message,
+                company_id: req.user?.company_id
+            });
             return res.status(500).json({ error: err.message });
         }
     }
@@ -68,8 +95,15 @@ class SystemController {
             const { id } = req.params;
             const updates = req.body;
             const updatedUser = await SystemService_1.default.updatePartial(String(id), updates);
+            new LogService_1.default({
+                system_id: id,
+                user_id: req.user?.id,
+                event_type: "update",
+                description: updatedUser,
+                company_id: req.user?.company_id
+            });
             return res.status(200).json({
-                message: 'User atualizado com sucesso.',
+                message: 'Sistema atualizado com sucesso.',
                 data: updatedUser,
             });
         }

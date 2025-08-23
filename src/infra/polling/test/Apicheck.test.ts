@@ -1,4 +1,0 @@
-
-describe("Polling API CHECK",{
-
-});

@@ -3,7 +3,7 @@ import snmp from 'net-snmp';
 export async function snmpCheck(host: string, oid: string) {
   return new Promise((resolve) => {
     const session = snmp.createSession(host, "public", { timeout: 2000 });
-    session.get([oid], (error, varbinds) => {
+    session.get([oid], (error: any, varbinds: { value: any; }[]) => {
       if (error) {
         resolve({ status: 'ERROR', data: null });
       } else {

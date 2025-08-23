@@ -1,1 +1,1 @@
-{"version":3,"file":"system.routes.d.ts","sourceRoot":"","sources":["../../src/routers/system.routes.ts"],"names":[],"mappings":"AAGA,QAAA,MAAM,YAAY,4CAAW,CAAC;AAY9B,eAAe,YAAY,CAAC"}
+{"version":3,"file":"system.routes.d.ts","sourceRoot":"","sources":["../../src/routers/system.routes.ts"],"names":[],"mappings":"AAKA,QAAA,MAAM,YAAY,4CAAW,CAAC;AAe9B,eAAe,YAAY,CAAC"}

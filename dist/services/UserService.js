@@ -8,9 +8,9 @@ const passwordHash_1 = require("../utils/passwordHash");
 const AuthService_1 = __importDefault(require("./AuthService"));
 class UserService {
     table = 'users';
-    async create({ name, email, password, role }) {
+    async create({ username, email, password, role, company_id }) {
         const { userId } = await AuthService_1.default.signUp({
-            username: name,
+            username,
             email,
             password,
         });
@@ -20,10 +20,12 @@ class UserService {
             .from(this.table)
             .insert({
             id: userId,
-            username: name,
+            username,
             email,
             password_hash: await (0, passwordHash_1.passwordHash)(password),
             role,
+            company_id,
+            status: 'active'
         })
             .select('*')
             .single();
@@ -64,15 +66,39 @@ class UserService {
             throw new Error(`Failed to delete user in Auth: ${authError.message}`);
     }
     async updatePartial(id, updateData) {
-        const { data, error } = await connect_1.default
-            .from(this.table)
-            .update(updateData)
-            .eq('id', id)
-            .select('*')
-            .single();
-        if (error)
-            throw new Error(`Failed to update user: ${error.message}`);
-        return data;
+        const { email, password, username, ...tableFields } = updateData;
+        let updatedUser = {};
+        if (email || password || username) {
+            const { data, error } = await connect_1.default.auth.admin.updateUserById(id, {
+                email,
+                password,
+                user_metadata: {
+                    display_name: username
+                }
+            });
+            if (error) {
+                throw new Error(`Failed to update user in Auth: ${error.message}`);
+            }
+            updatedUser = { ...updatedUser, ...data.user };
+        }
+        if (Object.keys(tableFields).length > 0 || email || username || password) {
+            const { data, error } = await connect_1.default
+                .from(this.table)
+                .update({
+                ...tableFields,
+                ...(email && { email }),
+                ...(username && { username }),
+                ...(password && { password_hash: await (0, passwordHash_1.passwordHash)(password) }),
+            })
+                .eq('id', id)
+                .select('*')
+                .single();
+            if (error) {
+                throw new Error(`Failed to update user in DB: ${error.message}`);
+            }
+            updatedUser = { ...updatedUser, ...data };
+        }
+        return updatedUser;
     }
 }
 exports.default = new UserService();
