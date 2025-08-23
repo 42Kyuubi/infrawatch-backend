@@ -1,10 +1,11 @@
 import supabase from '../infra/supabase/connect';
+import { Company } from '../interface/Company';
 import { System } from '../interface/System';
 
 class SystemService {
   private table = 'companies';
 
-  async create(systemData: System): Promise<System> {
+  async create(systemData: Company): Promise<System> {
 
     const { data, error } = await supabase
       .from(this.table)
@@ -12,32 +13,32 @@ class SystemService {
       .select('*')
       .single();
 
-    if (error) throw new Error(`Failed to create system: ${error.message}`);
+    if (error) throw new Error(`Failed to create company: ${error.message}`);
 
     return data as System;
   }
 
-  async getAll(): Promise<System[]> {
+  async getAll(): Promise<Company[]> {
     const { data, error } = await supabase
       .from(this.table)
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) throw new Error(`Failed to list systems: ${error.message}`);
+    if (error) throw new Error(`Failed to list companies: ${error.message}`);
 
-    return data as System[];
+    return data as Company[];
   }
 
-  async getById(id: string): Promise<System | null> {
+  async getById(id: string): Promise<Company | null> {
     const { data, error } = await supabase
       .from(this.table)
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error) throw new Error(`Failed to get system by ID: ${error.message}`);
+    if (error) throw new Error(`Failed to get company by ID: ${error.message}`);
 
-    return data as System;
+    return data as Company;
   }
 
   async delete(id: string): Promise<void> {
@@ -46,10 +47,10 @@ class SystemService {
       .delete()
       .eq('id', id);
 
-    if (error) throw new Error(`Failed to delete system: ${error.message}`);
+    if (error) throw new Error(`Failed to delete company: ${error.message}`);
   }
 
-  async updatePartial(id: string, updateData: Partial<System>): Promise<System> {
+  async updatePartial(id: string, updateData: Partial<Company>): Promise<Company> {
  
     const { data, error } = await supabase
       .from(this.table)
@@ -58,9 +59,9 @@ class SystemService {
       .select('*')
       .single();
 
-    if (error) throw new Error(`Failed to update system: ${error.message}`);
+    if (error) throw new Error(`Failed to update company: ${error.message}`);
 
-    return data as System;
+    return data as Company;
   }
   
 }

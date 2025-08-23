@@ -3,11 +3,11 @@ import { SystemSchema } from '../schemas/SystemSchema';
 import SystemService from '../services/SystemService';
 import LogService from '../services/LogService';
 
-class SystemController {
+class CompanyController {
 
   async create(req: Request, res: Response): Promise<Response> {
     const parsed = SystemSchema.safeParse(req.body);
-
+ 
     if (!parsed.success) {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
@@ -119,4 +119,4 @@ class SystemController {
 
 }
 
-export default new SystemController();
+export default new CompanyController();
