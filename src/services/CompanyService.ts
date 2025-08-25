@@ -35,9 +35,7 @@ class SystemService {
       .select('*')
       .eq('id', id)
       .single();
-
     if (error) throw new Error(`Failed to get company by ID: ${error.message}`);
-
     return data as Company;
   }
 

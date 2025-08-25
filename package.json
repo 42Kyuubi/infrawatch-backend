@@ -5,8 +5,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-    "dev:polling": "ts-node-dev --respawn --transpile-only ./src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -29,6 +28,7 @@
     "express": "^5.1.0",
     "net-snmp": "^3.23.0",
     "ping": "^0.4.4",
+    "resend": "^6.0.1",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.0.14"
   },

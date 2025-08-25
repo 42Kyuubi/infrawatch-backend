@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { SystemSchema } from '../schemas/SystemSchema';
 import SystemService from '../services/SystemService';
 import LogService from '../services/LogService';
+import CompanyService from '../services/CompanyService';
 
 class CompanyController {
 
@@ -100,7 +101,7 @@ class CompanyController {
       const { id } = req.params;
       const updates = req.body;
 
-      const updatedUser = await SystemService.updatePartial(String(id), updates);
+      const updatedUser = await CompanyService.updatePartial(String(id), updates);
         new LogService({
         system_id:id,
         user_id:req.user?.id,
@@ -109,7 +110,7 @@ class CompanyController {
         company_id: req.user?.company_id});
 
       return res.status(200).json({
-        message: 'Sistema atualizado com sucesso.',
+        message: 'Company atualizado com sucesso.',
         data: updatedUser,
       });
     } catch (err: any) {
