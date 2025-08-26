@@ -12,11 +12,20 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
   const { data: { user }, error } = await supabase.auth.getUser(token);
 
+    const { data:company_id } = await supabase
+      .from("users")
+      .select('company_id')
+      .eq('id', user?.id)
+      .single();
+
   if (error || !user) {
     return res.status(401).json({ error: 'Token inválido ou expirado.' });
   }
   
-  (req as any).user = user;
+  (req as any).user = {
+    ...user,
+    ...company_id
+  };
 
   next();
 }

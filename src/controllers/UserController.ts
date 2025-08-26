@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { userSchema } from '../schemas/UserSchema';
 import UserService from '../services/UserService';
-
+import { User } from '../interface/User';
+import LogService from '../services/LogService'; 
 class UserController {
 
   async create(req: Request, res: Response): Promise<Response> {
@@ -11,9 +12,20 @@ class UserController {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
     }
+    
+    const userData:User = {
+         company_id:req.user?.company_id,
+          ...parsed.data,
+    }
 
     try {
-      const user = await UserService.create(parsed.data);
+      const user = await UserService.create(userData);
+      new LogService({
+        user_id:req.user?.id,
+        event_type:"create",
+        description:user,
+        company_id: req.user?.company_id});
+
       return res.status(201).json({
         message: 'Usuario cadastrado com sucesso.',
         user: user,
@@ -52,8 +64,22 @@ class UserController {
     try {
       const { id } = req.params;
       await UserService.delete(String(id));
+
+         new LogService({
+        user_id:req.user?.id,
+        event_type:"delete",
+        description:{user_id: id},
+        company_id: req.user?.company_id});
+
       return res.status(200).json({ message: 'User deletado com sucesso.' });
     } catch (err: any) {
+
+         new LogService({
+          user_id:req.user?.id,
+          event_type:"error",
+          description:err.message,
+          company_id: req.user?.company_id});
+
       return res.status(500).json({ error: err.message });
     }
   }
@@ -65,14 +91,25 @@ class UserController {
 
       const updatedUser = await UserService.updatePartial(String(id), updates);
 
+        new LogService({
+        user_id:req.user?.id,
+        event_type:"update",
+        description:updatedUser,
+        company_id: req.user?.company_id});
+
       return res.status(200).json({
         message: 'User atualizado com sucesso.',
         data: updatedUser,
       });
     } catch (err: any) {
+       new LogService({
+        user_id:req.user?.id,
+        event_type:"error",
+        description:err.message,
+        company_id: req.user?.company_id});
       return res.status(500).json({ error: err.message });
     }
   }
 }
-
+ 
 export default new UserController();

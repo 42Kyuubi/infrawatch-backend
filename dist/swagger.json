@@ -5,7 +5,7 @@
         "description": "API for managing the InfraWatch system.",
         "version": "1.0.0"
     },
-    "host": "localhost:3000",
+    "host": "infrawatch-backend.onrender.com",
     "basePath": "/",
     "schemes": [
         "http"
@@ -24,91 +24,6 @@
                         "schema": {
                             "type": "string",
                             "example": "APi InfraWatch ON..."
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/signup": {
-            "post": {
-                "summary": "Register a new user",
-                "description": "Creates a new user in the system. The user is created in both the authentication service and the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "User data for registration",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "example": "John Doe"
-                                },
-                                "email": {
-                                    "type": "string",
-                                    "format": "email",
-                                    "example": "john.doe@example.com"
-                                },
-                                "password": {
-                                    "type": "string",
-                                    "example": "password123"
-                                },
-                                "role": {
-                                    "type": "string",
-                                    "example": "admin"
-                                }
-                            },
-                            "required": ["name", "email", "password", "role"]
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "User created successfully",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                                },
-                                "username": {
-                                    "type": "string",
-                                    "example": "John Doe"
-                                },
-                                "email": {
-                                    "type": "string",
-                                    "example": "john.doe@example.com"
-                                },
-                                "role": {
-                                    "type": "string",
-                                    "example": "admin"
-                                },
-                                "created_at": {
-                                    "type": "string",
-                                    "format": "date-time"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error creating user",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string",
-                                    "example": "Failed to create user in Auth"
-                                }
-                            }
                         }
                     }
                 }
@@ -143,7 +58,10 @@
                                     "example": "password123"
                                 }
                             },
-                            "required": ["email", "password"]
+                            "required": [
+                                "email",
+                                "password"
+                            ]
                         }
                     }
                 ],
@@ -191,7 +109,7 @@
         "/users": {
             "get": {
                 "summary": "List all users",
-                "description": "Returns a list of all users. Requires authentication.",
+                "description": "Returns a list of all users. Requires admin permission.",
                 "security": [
                     {
                         "bearerAuth": []
@@ -224,9 +142,9 @@
                                         "type": "string",
                                         "example": "admin"
                                     },
-                                    "created_at": {
+                                    "company_id": {
                                         "type": "string",
-                                        "format": "date-time"
+                                        "example": "company_123"
                                     }
                                 }
                             }
@@ -247,10 +165,89 @@
                 }
             }
         },
+        "/users/create": {
+            "post": {
+                "summary": "Create a new user",
+                "description": "Creates a new user. Requires admin permission.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "User data for creation",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "type": "string",
+                                    "example": "Jane Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "format": "email",
+                                    "example": "jane.doe@example.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "newpassword123"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "user"
+                                }
+                            },
+                            "required": [
+                                "username",
+                                "email",
+                                "password",
+                                "role"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "username": {
+                                    "type": "string",
+                                    "example": "Jane Doe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "jane.doe@example.com"
+                                },
+                                "role": {
+                                    "type": "string",
+                                    "example": "user"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/users/{id}": {
             "get": {
                 "summary": "Get user by ID",
-                "description": "Returns a single user by their ID. Requires authentication.",
+                "description": "Returns a single user by their ID.",
                 "security": [
                     {
                         "bearerAuth": []
@@ -289,10 +286,6 @@
                                 "role": {
                                     "type": "string",
                                     "example": "admin"
-                                },
-                                "created_at": {
-                                    "type": "string",
-                                    "format": "date-time"
                                 }
                             }
                         }
@@ -313,7 +306,7 @@
             },
             "delete": {
                 "summary": "Delete a user",
-                "description": "Deletes a user by their ID from both the database and the authentication service. Requires authentication.",
+                "description": "Deletes a user by their ID. Requires admin permission.",
                 "security": [
                     {
                         "bearerAuth": []
@@ -339,7 +332,7 @@
             },
             "patch": {
                 "summary": "Partially update a user",
-                "description": "Updates one or more fields of a user by their ID. Requires authentication.",
+                "description": "Updates one or more fields of a user by their ID. Requires admin permission.",
                 "security": [
                     {
                         "bearerAuth": []
@@ -368,6 +361,10 @@
                                 "role": {
                                     "type": "string",
                                     "example": "developer"
+                                },
+                                "company_id": {
+                                    "type": "string",
+                                    "example": "company_456"
                                 }
                             }
                         }
@@ -432,13 +429,52 @@
                                         "type": "string",
                                         "example": "System A"
                                     },
-                                    "description": {
+                                    "owner_user_id": {
                                         "type": "string",
-                                        "example": "Description for system A."
+                                        "example": "user_id_123"
                                     },
-                                    "created_at": {
+                                    "id_type": {
                                         "type": "string",
-                                        "format": "date-time"
+                                        "example": "type_id_456"
+                                    },
+                                    "connection_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "api",
+                                            "snmp",
+                                            "ping",
+                                            "webhook"
+                                        ],
+                                        "example": "api"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "up",
+                                            "maintenance",
+                                            "down"
+                                        ],
+                                        "example": "up"
+                                    },
+                                    "criticality_level": {
+                                        "type": "integer",
+                                        "example": 5
+                                    },
+                                    "sla_target": {
+                                        "type": "integer",
+                                        "example": 99
+                                    },
+                                    "check_interval": {
+                                        "type": "integer",
+                                        "example": 60
+                                    },
+                                    "target": {
+                                        "type": "string",
+                                        "example": "http://example.com"
+                                    },
+                                    "company_id": {
+                                        "type": "string",
+                                        "example": "company_123"
                                     }
                                 }
                             }
@@ -448,8 +484,7 @@
                         "description": "Unauthorized"
                     }
                 }
-            },
-            "post": {
+            }, "post": {
                 "summary": "Create a new system",
                 "description": "Creates a new system. Requires authentication.",
                 "security": [
@@ -471,14 +506,63 @@
                             "properties": {
                                 "name": {
                                     "type": "string",
-                                    "example": "System B"
+                                    "example": "RCS WEBSITE-CENTRAL"
                                 },
-                                "description": {
+                                "owner_user_id": {
                                     "type": "string",
-                                    "example": "Description for system B."
+                                    "example": "user_id_123"
+                                },
+                                "id_type": {
+                                    "type": "string",
+                                    "example": "da87b9ce-43bf-4283-9431-3b9a58d31c41"
+                                },
+                                "connection_type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "api",
+                                        "snmp",
+                                        "ping",
+                                        "webhook"
+                                    ],
+                                    "example": "api"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "up",
+                                        "maintenance",
+                                        "down"
+                                    ],
+                                    "example": "up"
+                                },
+                                "criticality_level": {
+                                    "type": "integer",
+                                    "example": 2
+                                },
+                                "sla_target": {
+                                    "type": "integer",
+                                    "example": 100
+                                },
+                                "check_interval": {
+                                    "type": "integer",
+                                    "example": 12
+                                },
+                                "target": {
+                                    "type": "string",
+                                    "example": "https://www.google.com"
                                 }
                             },
-                            "required": ["name", "description"]
+                            "required": [
+                                "name",
+                                "owner_user_id",
+                                "id_type",
+                                "connection_type",
+                                "status",
+                                "criticality_level",
+                                "sla_target",
+                                "check_interval",
+                                "target"
+                            ]
                         }
                     }
                 ],
@@ -494,105 +578,13 @@
                                 },
                                 "name": {
                                     "type": "string",
-                                    "example": "System B"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "Description for system B."
-                                },
-                                "created_at": {
-                                    "type": "string",
-                                    "format": "date-time"
+                                    "example": "RCS WEBSITE-CENTRAL"
                                 }
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized"
-                    }
-                }
-            },
-            "delete": {
-                "summary": "Delete a system",
-                "description": "Deletes a system by its ID. Requires authentication.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "required": true,
-                        "type": "string",
-                        "description": "The ID of the system to delete."
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "System deleted successfully"
-                    },
-                    "404": {
-                        "description": "System not found"
-                    }
-                }
-            },
-            "patch": {
-                "summary": "Partially update a system",
-                "description": "Updates one or more fields of a system. Requires authentication.",
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "required": true,
-                        "type": "string",
-                        "description": "The ID of the system to update."
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "The fields to update",
-                        "required": true,
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "example": "Updated System B"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "System updated successfully",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "Updated System B"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "Description for system B."
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "System not found"
                     }
                 }
             }
@@ -645,6 +637,324 @@
                     },
                     "404": {
                         "description": "System not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a system",
+                "description": "Deletes a system by its ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system to delete."
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "System deleted successfully"
+                    },
+                    "404": {
+                        "description": "System not found"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Partially update a system",
+                "description": "Updates one or more fields of a system. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system to update."
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The fields to update",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Updated System B"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "up",
+                                        "maintenance",
+                                        "down"
+                                    ],
+                                    "example": "down"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System updated successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Updated System B"
+                                },
+                                "status": {
+                                    "type": "string",
+                                    "example": "down"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "System not found"
+                    }
+                }
+            }
+        },
+        "/systems/type/all": {
+            "get": {
+                "summary": "List all system types",
+                "description": "Returns a list of all system types. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of system types returned successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "example": "type_id_1"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Server"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Physical or virtual server."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/systems/type/create": {
+            "post": {
+                "summary": "Create a new system type",
+                "description": "Creates a new system type. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "System type data for creation",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Database"
+                                }
+                            },
+                            "required": [
+                                "name"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "System type created successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "type_id_2"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Database"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/systems/type/{id}": {
+            "get": {
+                "summary": "Get system type by ID",
+                "description": "Returns a single system type by its ID.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system type to retrieve."
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System type found",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "type_id_1"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Server"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "System type not found"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a system type",
+                "description": "Deletes a system type by its ID. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system type to delete."
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "System type deleted successfully"
+                    },
+                    "404": {
+                        "description": "System type not found"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Partially update a system type",
+                "description": "Updates one or more fields of a system type. Requires authentication.",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the system type to update."
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The fields to update",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Virtual Machine"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "System type updated successfully",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "type_id_1"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Virtual Machine"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "Physical or virtual server."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "System type not found"
                     }
                 }
             }

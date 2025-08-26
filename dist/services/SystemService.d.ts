@@ -1,4 +1,4 @@
-import { System } from '../models/System';
+import { System } from '../interface/System';
 declare class SystemService {
     private table;
     create(systemData: System): Promise<System>;

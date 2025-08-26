@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'; 
 import { SystemSchema } from '../schemas/systemSchema';
 import SystemService from '../services/SystemService';
+import LogService from '../services/LogService';
 
 class SystemController {
 
   async create(req: Request, res: Response): Promise<Response> {
-    const parsed =SystemSchema.safeParse(req.body);
+    const parsed = SystemSchema.safeParse(req.body);
 
     if (!parsed.success) {
       const errors = parsed.error.format();
@@ -13,17 +14,33 @@ class SystemController {
     }
 
     const data = {
+        owner_user_id:req.user?.id,
+        company_id:req.user?.company_id,
         ...parsed.data,
-        owner_user_id:req.user?.id || ""
     }
-    console.log(data);
+
     try {
       const system = await SystemService.create(data);
+
+        new LogService({
+        system_id:system.id,
+        user_id:req.user?.id,
+        event_type:"create",
+        description:system,
+        company_id: req.user?.company_id});
+
       return res.status(201).json({
         message: 'sistema cadastrado com sucesso.',
         system: system,
       });
     } catch (err: any) {
+
+         new LogService({
+        user_id:req.user?.id,
+        event_type:"error",
+        description:err.message,
+        company_id: req.user?.company_id});
+
       return res.status(400).json({ error: err.message });
     }
   }
@@ -32,7 +49,7 @@ class SystemController {
     try {
       const employees = await SystemService.getAll();
       return res.status(200).json({
-        message: 'Lista de User.',
+        message: 'Lista de Sistemas.',
         data: employees,
       });
     } catch (err: any) {
@@ -45,7 +62,7 @@ class SystemController {
       const {id} = req.params;
       const employee = await SystemService.getById(String(id));
       return res.status(200).json({
-        message: 'User.',
+        message: 'Sistema.',
         data: employee,
       });
     } catch (err: any) {
@@ -57,8 +74,23 @@ class SystemController {
     try {
       const { id } = req.params;
       await SystemService.delete(String(id));
-      return res.status(200).json({ message: 'User deletado com sucesso.' });
+
+          new LogService({
+          system_id:id,
+          user_id:req.user?.id,
+          event_type:"delete",
+          description:{system_id: id},
+          company_id: req.user?.company_id});
+
+      return res.status(200).json({ message: 'Sistema deletado com sucesso.' });
     } catch (err: any) {
+
+        new LogService({
+        user_id:req.user?.id,
+        event_type:"error",
+        description:err.message,
+        company_id: req.user?.company_id});
+
       return res.status(500).json({ error: err.message });
     }
   }
@@ -69,15 +101,22 @@ class SystemController {
       const updates = req.body;
 
       const updatedUser = await SystemService.updatePartial(String(id), updates);
+        new LogService({
+        system_id:id,
+        user_id:req.user?.id,
+        event_type:"update",
+        description:updatedUser,
+        company_id: req.user?.company_id});
 
       return res.status(200).json({
-        message: 'User atualizado com sucesso.',
+        message: 'Sistema atualizado com sucesso.',
         data: updatedUser,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }
   }
+
 }
 
 export default new SystemController();

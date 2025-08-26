@@ -1,6 +1,6 @@
 import { z } from 'zod';
 export declare const userSchema: z.ZodObject<{
-    name: z.ZodString;
+    username: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
     role: z.ZodEnum<{
