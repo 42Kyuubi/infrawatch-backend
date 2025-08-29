@@ -6,11 +6,12 @@ import LogService from '../services/LogService';
 class SystemController {
 
   async create(req: Request, res: Response): Promise<Response> {
+
     const parsed = SystemSchema.safeParse(req.body);
 
     if (!parsed.success) {
       const errors = parsed.error.format();
-      return res.status(400).json({ errors });
+      return res.status(401).json({ errors });
     }
 
     const data = {

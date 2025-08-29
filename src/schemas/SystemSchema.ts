@@ -11,10 +11,7 @@ export const SystemSchema = z.object({
   connection_type: ConnectionType, 
   status: Status,
   criticality_level: z
-    .number()
-    .int()
-    .min(1, "criticality_level must be between 1 and 5")
-    .max(5, "criticality_level must be between 1 and 5"),
+    .string().min(1, "criticality_level cannot be empty"),
   sla_target: z
     .number()
     .min(0, "sla_target must be >= 0")
