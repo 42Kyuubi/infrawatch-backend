@@ -25,7 +25,7 @@ export class GLPIService {
                 headers: {
                     'Content-Type': 'application/json',
                     'App-Token': appToken,
-                    'Authorization': userToken,
+                    'Authorization': `user_token $userToken`,
                 }
             });
             if (response.ok)
