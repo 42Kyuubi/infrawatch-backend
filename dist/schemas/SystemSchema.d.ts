@@ -4,9 +4,9 @@ export declare const SystemSchema: z.ZodObject<{
     id_type: z.ZodString;
     target: z.ZodString;
     connection_type: z.ZodEnum<{
-        ping: "ping";
-        snmp: "snmp";
         api: "api";
+        snmp: "snmp";
+        ping: "ping";
         webhook: "webhook";
     }>;
     status: z.ZodEnum<{
