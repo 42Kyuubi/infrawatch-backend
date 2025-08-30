@@ -42,3 +42,22 @@ content-type: application/json
     "email": "alfredochivela3@gmail.com",
     "password": "masculino"
 }
+
+###
+GET http://localhost:2000/api/glpi/token
+content-type: application/json
+Authorization: E4zMzPTM6DutsES4Dw37ESRt3F5Upd9O7ZKMsu9V
+App-Token: DDFnPZekOinK1JSDO47kqyK2WJOpKLiSoIwVIt08
+api-url: http://localhost:3001/apirest.php/
+
+###
+POST http://localhost:2000/api/glpi/token
+content-type: application/json
+Authorization: E4zMzPTM6DutsES4Dw37ESRt3F5Upd9O7ZKMsu9V
+App-Token: DDFnPZekOinK1JSDO47kqyK2WJOpKLiSoIwVIt08
+api-url: http://localhost:3001/apirest.php/
+
+{
+    "name": "This is an example from test",
+    "content": "Something broke and is down, please solve this to avoid extended service interruption."
+}
