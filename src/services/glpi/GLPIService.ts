@@ -1,7 +1,7 @@
 /**
  *
  */
-type Ticket = {
+export type Ticket = {
     name: string;
     content: string;
     status: 1;
