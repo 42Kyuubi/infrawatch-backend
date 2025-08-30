@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const SystemSchema_1 = require("../schemas/SystemSchema");
 const SystemService_1 = __importDefault(require("../services/SystemService"));
 const LogService_1 = __importDefault(require("../services/LogService"));
+const CompanyService_1 = __importDefault(require("../services/CompanyService"));
 class CompanyController {
     async create(req, res) {
         const parsed = SystemSchema_1.SystemSchema.safeParse(req.body);
@@ -94,7 +95,7 @@ class CompanyController {
         try {
             const { id } = req.params;
             const updates = req.body;
-            const updatedUser = await SystemService_1.default.updatePartial(String(id), updates);
+            const updatedUser = await CompanyService_1.default.updatePartial(String(id), updates);
             new LogService_1.default({
                 system_id: id,
                 user_id: req.user?.id,
@@ -103,7 +104,7 @@ class CompanyController {
                 company_id: req.user?.company_id
             });
             return res.status(200).json({
-                message: 'Sistema atualizado com sucesso.',
+                message: 'Company atualizado com sucesso.',
                 data: updatedUser,
             });
         }

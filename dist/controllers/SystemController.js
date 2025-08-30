@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const systemSchema_1 = require("../schemas/systemSchema");
+const SystemSchema_1 = require("../schemas/SystemSchema");
 const SystemService_1 = __importDefault(require("../services/SystemService"));
 const LogService_1 = __importDefault(require("../services/LogService"));
 class SystemController {
     async create(req, res) {
-        const parsed = systemSchema_1.SystemSchema.safeParse(req.body);
+        const parsed = SystemSchema_1.SystemSchema.safeParse(req.body);
         if (!parsed.success) {
             const errors = parsed.error.format();
             return res.status(400).json({ errors });
@@ -20,6 +20,7 @@ class SystemController {
         };
         try {
             const system = await SystemService_1.default.create(data);
+            // @ts-ignore
             new LogService_1.default({
                 system_id: system.id,
                 user_id: req.user?.id,
@@ -33,6 +34,7 @@ class SystemController {
             });
         }
         catch (err) {
+            // @ts-ignore
             new LogService_1.default({
                 user_id: req.user?.id,
                 event_type: "error",
@@ -71,6 +73,7 @@ class SystemController {
         try {
             const { id } = req.params;
             await SystemService_1.default.delete(String(id));
+            // @ts-ignore
             new LogService_1.default({
                 system_id: id,
                 user_id: req.user?.id,
@@ -81,6 +84,7 @@ class SystemController {
             return res.status(200).json({ message: 'Sistema deletado com sucesso.' });
         }
         catch (err) {
+            // @ts-ignore
             new LogService_1.default({
                 user_id: req.user?.id,
                 event_type: "error",
@@ -95,6 +99,7 @@ class SystemController {
             const { id } = req.params;
             const updates = req.body;
             const updatedUser = await SystemService_1.default.updatePartial(String(id), updates);
+            // @ts-ignore
             new LogService_1.default({
                 system_id: id,
                 user_id: req.user?.id,
