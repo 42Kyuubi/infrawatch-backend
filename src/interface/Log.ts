@@ -1,10 +1,10 @@
 type EventType = "login" | "logout" | "error" | "update" | "create" | "delete";
 
 export interface Log {     
-  id?:string;    
-  system_id?: string | null;  
-  user_id?: string | null; 
+  id?:string | undefined;    
+  system_id?: string | undefined | null;  
+  user_id?: string | undefined | null; 
   event_type: EventType; 
-  description?: string | {};  
-  company_id:string | undefined
+  description?: string | {} | undefined;  
+  company_id:string | undefined | null
 }

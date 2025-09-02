@@ -5,6 +5,7 @@ import { permissionMiddleware } from "../middleware/permissionMiddleware";
 
 const systemRouter = Router();
 
+
 systemRouter.get("/", systemController.getAll);
 systemRouter.post("/",permissionMiddleware, systemController.create);
 systemRouter.get("/:id",systemController.getById);

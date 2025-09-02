@@ -47,10 +47,10 @@ class SystemController {
 
   async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const employees = await SystemService.getAll();
+      const systems = await SystemService.getAll();
       return res.status(200).json({
         message: 'Lista de Sistemas.',
-        data: employees,
+        data: systems,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
@@ -70,16 +70,46 @@ class SystemController {
     }
   }
 
+ async streamAll(req: Request, res: Response) {
+  try {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders(); // envia headers imediatamente
+
+    // exemplo: envia os dados atuais
+    const systems = await SystemService.getAll();
+    res.write(`data: ${JSON.stringify(systems)}\n\n`);
+
+    // exemplo: envia atualização a cada 10s
+    const interval = setInterval(async () => {
+      const systems = await SystemService.getAll();
+      res.write(`data: ${JSON.stringify(systems)}\n\n`);
+    }, 1000);
+
+    // fecha a conexão quando o cliente desconecta
+    req.on("close", () => {
+      clearInterval(interval);
+      res.end();
+    });
+
+  } catch (err: any) {
+    console.error("SSE error:", err);
+    res.end();
+  }
+}
+
+
   async delete(req: Request, res: Response): Promise<Response> {
     try {
       const { id } = req.params;
       await SystemService.delete(String(id));
 
           new LogService({
-          system_id:id,
+          system_id:null,
           user_id:req.user?.id,
           event_type:"delete",
-          description:{system_id: id},
+          description:"sistema eliminado: "+{system_id: id},
           company_id: req.user?.company_id});
 
       return res.status(200).json({ message: 'Sistema deletado com sucesso.' });

@@ -31,13 +31,27 @@ class AuthController {
       return res.status(400).json({ errors });
     }
 
-    try {
+    try { 
       const result = await AuthService.signIn(parsed.data);
       return res.status(200).json(result);
     } catch (err: any) {
       return res.status(401).json({ error: err.message });
     }
   }
+
+  async refresh(req: Request, res: Response): Promise<Response> {
+      try {
+        const { refresh_token } = req.body;
+        if (!refresh_token) {
+          return res.status(400).json({ error: "refresh_token é obrigatório" });
+        }
+
+        const result = await AuthService.refresh(refresh_token);
+        return res.status(200).json(result);
+      } catch (err: any) {
+        return res.status(401).json({ error: err.message });
+      }
+    }
 }
 
 export default new AuthController();

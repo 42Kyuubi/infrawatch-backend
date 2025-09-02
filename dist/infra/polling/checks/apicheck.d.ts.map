@@ -1,1 +1,0 @@
-{"version":3,"file":"apicheck.d.ts","sourceRoot":"","sources":["../../../../src/infra/polling/checks/apicheck.ts"],"names":[],"mappings":"AAEA,UAAU,SAAS;IAEf,MAAM,EAAE,MAAM,CAAC;IACf,IAAI,EAAE,IAAI,GAAG,MAAM,CAAC;IACpB,OAAO,EAAE,EAAE,CAAA;CACd;AAED,wBAAsB,QAAQ,CAAC,GAAG,EAAE,MAAM,GAAG,OAAO,CAAC,SAAS,CAAC,CAa9D"}

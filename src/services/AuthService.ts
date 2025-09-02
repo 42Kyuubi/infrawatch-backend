@@ -34,14 +34,37 @@ class AuthService {
       password,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+    throw new Error("Credenciais inválidas");
+  }
 
     return {
-      token: data.session?.access_token,
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      expires_in: data.session.expires_in,
       user: {
         id: data.user.id,
         email: data.user.email,
       },
+    };
+  }
+
+  async refresh(refresh_token: string) {
+    const { data, error } = await supabase.auth.refreshSession({
+      refresh_token, 
+    });
+
+    if (error || !data.session) {
+      console.log(error);
+      throw new Error("Refresh inválido");
+    }
+
+    
+    return {
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      expires_in: data.session.expires_in,
+      user: data.session.user,
     };
   }
 }
