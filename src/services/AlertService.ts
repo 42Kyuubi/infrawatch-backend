@@ -1,10 +1,10 @@
 import supabase from '../infra/supabase/connect';
-import { Alerts } from '../interface/Alert';
+import Alerts  from '../interface/Alerts';
 
 class AlertService {
   private table = 'alerts';
 
-  async create(AlertsData: Alerts): Promise<System> {
+  async create(AlertsData: Alerts): Promise<Alerts> {
 
     const { data, error } = await supabase
       .from(this.table)
@@ -14,55 +14,21 @@ class AlertService {
 
     if (error) throw new Error(`Failed to create system: ${error.message}`);
 
-    return data as System;
+    return data as Alerts;
   }
 
-  async getAll(): Promise<System[]> {
+  async getAll(): Promise<Alerts[]> {
     const { data, error } = await supabase
       .from(this.table)
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('sent_at');
 
     if (error) throw new Error(`Failed to list systems: ${error.message}`);
 
-    return data as System[];
+    return data as Alerts[];
   }
-
-  async getById(id: string): Promise<System | null> {
-    const { data, error } = await supabase
-      .from(this.table)
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) throw new Error(`Failed to get system by ID: ${error.message}`);
-
-    return data as System;
-  }
-
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from(this.table)
-      .delete()
-      .eq('id', id);
-
-    if (error) throw new Error(`Failed to delete system: ${error.message}`);
-  }
-
-  async updatePartial(id: string, updateData: Partial<System>): Promise<System> {
  
-    const { data, error } = await supabase
-      .from(this.table)
-      .update(updateData)
-      .eq('id', id)
-      .select('*')
-      .single();
-
-    if (error) throw new Error(`Failed to update system: ${error.message}`);
-
-    return data as System;
-  }
-  
+ 
 }
 
 export default new AlertService();

@@ -72,29 +72,16 @@ class AlertController {
  
   async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const employees = await SystemService.getAll();
+      const alerts = await AlertService.getAll();
       return res.status(200).json({
-        message: 'Lista de Sistemas.',
-        data: employees,
+        message: 'Lista de Alertas.',
+        data: alerts,
       });
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
     }
   }
-
-  async getById(req: Request, res: Response): Promise<Response> {
-    try {
-      const {id} = req.params;
-      const employee = await SystemService.getById(String(id));
-      return res.status(200).json({
-        message: 'Sistema.',
-        data: employee,
-      });
-    } catch (err: any) {
-      return res.status(500).json({ error: err.message });
-    }
-  }
-
+ 
 }
 
 export default new AlertController();
