@@ -7,7 +7,6 @@ const express_1 = require("express");
 const IntegrationController_1 = __importDefault(require("../controllers/IntegrationController"));
 const integrationsRouter = (0, express_1.Router)();
 integrationsRouter.post("/agents", IntegrationController_1.default.validationAgent);
-//integrationsRouter.post("/agents/systems",integrationController.getSystems); 
 integrationsRouter.get("/", IntegrationController_1.default.getAll);
 integrationsRouter.post("/", IntegrationController_1.default.create);
 exports.default = integrationsRouter;

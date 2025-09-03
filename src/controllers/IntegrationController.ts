@@ -8,6 +8,19 @@ class IntegrationController {
 async validationAgent(req: Request, res: Response): Promise<Response> {
   const parsed = req.body;
 
+ 
+  const data = {
+    token:parsed.token,
+    region:parsed.region,
+    cod_agent:parsed.urlServer,
+    country:parsed.country,
+    city:parsed.city,
+    latitude:parsed.latitude,
+    longitude:parsed.longitude,
+    date_time:parsed.date_time,
+    status:"active",
+  }
+
   try {
     const existingIntegration = await IntegrationService.findByToken(parsed.token);
 
@@ -20,6 +33,7 @@ async validationAgent(req: Request, res: Response): Promise<Response> {
       });
 
       return res.status(400).json({
+        result:'KO',
         message: "Token inválido ou integração não encontrada."
       });
     }
@@ -33,13 +47,14 @@ async validationAgent(req: Request, res: Response): Promise<Response> {
       });
 
       return res.status(400).json({
+        result:'KO',
         message: "Token inválido ou já ativo."
       });
     }
 
     const integration = await IntegrationService.updatePartial(
       String(existingIntegration.id),
-      { ...parsed, status: "active" }
+      data
     );
 
     new LogService({
@@ -51,7 +66,8 @@ async validationAgent(req: Request, res: Response): Promise<Response> {
 
     return res.status(200).json({
       message: "Integration ativada com sucesso.",
-      system: integration,
+      result:'OK',
+      system: integration
     });
   } catch (err: any) {
     new LogService({
@@ -61,7 +77,7 @@ async validationAgent(req: Request, res: Response): Promise<Response> {
       company_id: req.user?.company_id
     });
 
-    return res.status(400).json({ error: "Token inválido ou integração não encontrada." });
+    return res.status(400).json({result:'KO', error: "Token inválido ou integração não encontrada." });
   }
 }
 

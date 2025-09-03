@@ -10,6 +10,17 @@ const CompanyService_1 = __importDefault(require("../services/CompanyService"));
 class IntegrationController {
     async validationAgent(req, res) {
         const parsed = req.body;
+        const data = {
+            token: parsed.token,
+            region: parsed.region,
+            cod_agent: parsed.urlServer,
+            country: parsed.country,
+            city: parsed.city,
+            latitude: parsed.latitude,
+            longitude: parsed.longitude,
+            date_time: parsed.date_time,
+            status: "active",
+        };
         try {
             const existingIntegration = await IntegrationService_1.default.findByToken(parsed.token);
             if (!existingIntegration) {
@@ -20,6 +31,7 @@ class IntegrationController {
                     company_id: req.user?.company_id
                 });
                 return res.status(400).json({
+                    result: 'KO',
                     message: "Token inválido ou integração não encontrada."
                 });
             }
@@ -31,10 +43,11 @@ class IntegrationController {
                     company_id: req.user?.company_id
                 });
                 return res.status(400).json({
+                    result: 'KO',
                     message: "Token inválido ou já ativo."
                 });
             }
-            const integration = await IntegrationService_1.default.updatePartial(String(existingIntegration.id), { ...parsed, status: "active" });
+            const integration = await IntegrationService_1.default.updatePartial(String(existingIntegration.id), data);
             new LogService_1.default({
                 user_id: req.user?.id,
                 event_type: "update",
@@ -43,7 +56,8 @@ class IntegrationController {
             });
             return res.status(200).json({
                 message: "Integration ativada com sucesso.",
-                system: integration,
+                result: 'OK',
+                system: integration
             });
         }
         catch (err) {
@@ -53,7 +67,7 @@ class IntegrationController {
                 description: err.message,
                 company_id: req.user?.company_id
             });
-            return res.status(400).json({ error: "Token inválido ou integração não encontrada." });
+            return res.status(400).json({ result: 'KO', error: "Token inválido ou integração não encontrada." });
         }
     }
     async create(req, res) {
