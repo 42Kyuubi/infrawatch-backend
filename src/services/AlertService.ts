@@ -1,5 +1,5 @@
 import supabase from '../infra/supabase/connect';
-import Alerts  from '../interface/Alerts';
+import {Alerts}  from '../interface/Alerts';
 
 class AlertService {
   private table = 'alerts';

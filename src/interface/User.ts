@@ -14,6 +14,7 @@ export interface UserDTO {
   username: string;
   role: string;
   created_at: string;
+  email:string;
   status:string;
   user: {
     id: string;

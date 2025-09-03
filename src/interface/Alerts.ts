@@ -1,4 +1,4 @@
-export interface Alert {
+export interface Alerts {
   id?: string; 
   system_id?: string; 
   trigger_condition: string;

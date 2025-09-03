@@ -4,5 +4,6 @@ export interface Company {
   name: string;
   logo: string | null;
   nif: string;
-  type_plane: string; 
+  type_plane: string;
+  glpi:Boolean 
 }

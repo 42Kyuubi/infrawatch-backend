@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function systemDownTemplate({ systemName, downSince, dashboardUrl, supportEmail }) {
+function systemDownTemplate({ systemName, downSince, dashboardUrl, supportEmail }:any) {
   return `
   <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -34,7 +34,7 @@ function systemDownTemplate({ systemName, downSince, dashboardUrl, supportEmail 
 }
  
 
-export async function sendSystemDownEmail({systemName, downSince, emailTo }) {
+export async function sendSystemDownEmail({systemName, downSince, emailTo }:any) {
   const html = systemDownTemplate({
     systemName,
     downSince: downSince,
@@ -44,7 +44,7 @@ export async function sendSystemDownEmail({systemName, downSince, emailTo }) {
 
   try {
     const data = await resend.emails.send({
-      from: "Infrawatch <onboarding@resend.dev>",
+      from: "Infrawatch <geral@infra-watch.tech>",
       to: emailTo,
       subject: `[ALERTA] ${systemName} está indisponível`,
       html,

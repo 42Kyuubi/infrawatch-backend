@@ -5,9 +5,12 @@ import { sendSystemDownEmail } from '../infra/notify/send';
 import SystemService from '../services/SystemService';
 import supabase from '../infra/supabase/connect';
 import UserService from '../services/UserService';
+import CompanyService from '../services/CompanyService';
+import { createTicket } from '../infra/glpi/connect';
+import { Alerts } from '../interface/Alerts';
  
  
-const notifiedSystems = new Set<number>();
+const notifiedSystems = new Set<Alerts>();
 
 export async function startSystemWatcher() {
   const channel = supabase
@@ -15,13 +18,13 @@ export async function startSystemWatcher() {
     .on(
       "postgres_changes",
       {
-        event: "*", // INSERT | UPDATE | DELETE
+        event: "*",
         schema: "public",
         table: "systems",
       },
-      async (payload) => {
+      async (payload:any) => {
         try {
-          const system = payload.new;
+          const system:any = payload.new;
 
           if (!system) return;
 
@@ -32,10 +35,9 @@ export async function startSystemWatcher() {
               await sendSystemDownEmail({
                 systemName: system.name,
                 downSince: new Date().toISOString(),
-                emailTo:user.email
+                emailTo:user?.email
               });
 
-              
               notifiedSystems.add(system.id);
 
               new LogService({
@@ -44,6 +46,18 @@ export async function startSystemWatcher() {
                 description: `Enviado alerta de sistema down: ${system.name}`,
                 company_id: system.company_id,
               });
+
+              const companyGLPI = await CompanyService.getById(String(system.company_id));
+              if(companyGLPI?.glpi === true)
+              {
+                createTicket({
+                    name:system.name,
+                    content: "Sistema no estado down",
+                    status:  1,
+                    urgency:  4,
+                    impact:   4,
+                });
+              }
             }
           } else {
            

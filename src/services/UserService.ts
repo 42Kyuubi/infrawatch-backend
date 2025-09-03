@@ -1,7 +1,7 @@
 import supabase from '../infra/supabase/connect';
 import { User, UserDTO } from '../interface/User';
 import { passwordHash } from '../utils/passwordHash';
-import AuthService from './AuthService';
+import AuthService from './AuthService'; 
 
 class UserService
 {
@@ -76,49 +76,50 @@ class UserService
   }
 
 async updatePartial(id: string, updateData: Partial<User>): Promise<UserDTO> {
-  
-    const { email, password, username, ...tableFields } = updateData;
+  const { email, password, username, ...tableFields } = updateData;
 
-    let updatedUser: any = {};
-  
-    if (email || password || username) {
-      const { data, error } = await supabase.auth.admin.updateUserById(id, {
-        email,
-        password,
-        user_metadata: {
-          display_name:  username
-        }
-      });
+  let updatedUser: any = {};
 
-      if (error) {
-        throw new Error(`Failed to update user in Auth: ${error.message}`);
-      }
+  // Dados que vão para o Supabase Auth
+  const authUpdateData: any = {
+    ...(email && { email }),
+    ...(password && { password }),
+    ...(username && { user_metadata: { display_name: username } })
+  };
 
-      updatedUser = { ...updatedUser, ...data.user };
+  if (email || password || username) {
+    const { data: authData, error: authError } = 
+      await supabase.auth.admin.updateUserById(id, authUpdateData);
+
+    if (authError) {
+      throw new Error(`Failed to update user in Auth: ${authError.message}`);
     }
 
-    if (Object.keys(tableFields).length > 0 || email || username || password) {
-      const { data, error } = await supabase
-        .from(this.table)
-        .update({
-          ...tableFields,
-          ...(email && { email }),
-          ...(username && { username }),
-          ...(password && { password_hash: await passwordHash(password) }),
-        })
-        .eq('id', id)
-        .select('*')
-        .single();
-
-      if (error) {
-        throw new Error(`Failed to update user in DB: ${error.message}`);
-      }
-
-      updatedUser = { ...updatedUser, ...data };
-    }
-
-    return updatedUser as UserDTO;
+    updatedUser = { ...updatedUser, ...authData.user };
   }
+
+  if (Object.keys(tableFields).length > 0 || email || username || password) {
+    const { data: dbData, error: dbError } = await supabase
+      .from(this.table)
+      .update({
+        ...tableFields,
+        ...(email && { email }),
+        ...(username && { username }),
+        ...(password && { password_hash: await passwordHash(password) }),
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (dbError) {
+      throw new Error(`Failed to update user in DB: ${dbError.message}`);
+    }
+
+    updatedUser = { ...updatedUser, ...dbData };
+  }
+
+  return updatedUser as UserDTO;
+}
 }
 
 export default new UserService();
