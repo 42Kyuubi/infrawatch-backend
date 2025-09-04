@@ -12,7 +12,7 @@ async validationAgent(req: Request, res: Response): Promise<Response> {
   const data = {
     token:parsed.token,
     region:parsed.region,
-    cod_agent:parsed.urlServer,
+    cod_agent:parsed.cod_agent,
     country:parsed.country,
     city:parsed.city,
     latitude:parsed.latitude,

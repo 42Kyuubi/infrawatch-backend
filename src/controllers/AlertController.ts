@@ -47,6 +47,14 @@ export async function startSystemWatcher() {
                 company_id: system.company_id,
               });
 
+                await AlertService.create({
+                    system_id: system.id,
+                    trigger_condition: system.name,
+                    notification_type: "email",
+                    recipient:`Sistema ${system.name} está down `,
+                    sent_at:new Date().toISOString(), 
+                    company_id: system.company_id, 
+                });          
               const companyGLPI = await CompanyService.getById(String(system.company_id));
               if(companyGLPI?.glpi === true)
               {
