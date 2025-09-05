@@ -16,6 +16,7 @@ class SystemController {
     const data = {
         owner_user_id:req.user?.id,
         company_id:req.user?.company_id,
+        agent:"none",
         ...parsed.data,
     }
 

@@ -1,103 +1,29 @@
-import { Request, Response } from 'express';  ;
+import { Request, Response } from 'express';  
 import LogService from '../services/LogService'; 
 import IntegrationService from '../services/IntegrationService';
-import CompanyService from '../services/CompanyService';
+import CompanyService from '../services/CompanyService'; 
 
 class IntegrationController {
-
-async validationAgent(req: Request, res: Response): Promise<Response> {
-  const parsed = req.body;
-
  
-  const data = {
-    token:parsed.token,
-    region:parsed.region,
-    cod_agent:parsed.cod_agent,
-    country:parsed.country,
-    city:parsed.city,
-    latitude:parsed.latitude,
-    longitude:parsed.longitude,
-    date_time:parsed.date_time,
-    status:"active",
-  }
-
-  try {
-    const existingIntegration = await IntegrationService.findByToken(parsed.token);
-
-    if (!existingIntegration) {
-      new LogService({
-        user_id: req.user?.id,
-        event_type: "error",
-        description: `Token inválido: ${parsed.token}`,
-        company_id: req.user?.company_id
-      });
-
-      return res.status(400).json({
-        result:'KO',
-        message: "Token inválido ou integração não encontrada."
-      });
-    }
-
-    if (existingIntegration.status === "active") {
-      new LogService({
-        user_id: req.user?.id,
-        event_type: "error",
-        description: `Token já ativo: ${parsed.token}`,
-        company_id: req.user?.company_id
-      });
-
-      return res.status(400).json({
-        result:'KO',
-        message: "Token inválido ou já ativo."
-      });
-    }
-
-    const integration = await IntegrationService.updatePartial(
-      String(existingIntegration.id),
-      data
-    );
-
-    new LogService({
-      user_id: req.user?.id,
-      event_type: "update",
-      description: integration,
-      company_id: req.user?.company_id
-    });
-
-    return res.status(200).json({
-      message: "Integration ativada com sucesso.",
-      result:'OK',
-      system: integration
-    });
-  } catch (err: any) {
-    new LogService({
-      user_id: req.user?.id,
-      event_type: "error",
-      description: err.message,
-      company_id: req.user?.company_id
-    });
-
-    return res.status(400).json({result:'KO', error: "Token inválido ou integração não encontrada." });
-  }
-}
-
-async create(req: Request, res: Response): Promise<Response> {
+ async create(req: Request, res: Response): Promise<Response> {
     const parsed = (req.body);
-
     const data= {
-    ...parsed,
-    status:'desative',
-    }
-
+     token: parsed.agent_token,
+     type: parsed.id_type === '1'? "AGENT" : "GPLI",
+     APP_TOKEN: parsed.api_token,
+     API_URL: parsed.api_url, 
+     AUTH_TOKEN: parsed.auth_token,
+     status:'inative',
+    }    
+     
     try {
       const Integration = await IntegrationService.create(data);
-      
-    if (Integration.type === 'GLPI') {
-      await CompanyService.updatePartial(
-        String(req.user?.company_id),
-        { glpi: true }
-      );
-    }
+      if (Integration.type === 'GLPI') {
+        await CompanyService.updatePartial(
+          String(req.user?.company_id),
+          { glpi: true }
+        );
+      }
         new LogService({ 
         user_id:req.user?.id,
         event_type:"create",
@@ -169,29 +95,7 @@ async create(req: Request, res: Response): Promise<Response> {
       return res.status(500).json({ error: err.message });
     }
   }
-
-  async patch(req: Request, res: Response): Promise<Response> {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-
-      const updatedIntegration = await IntegrationService.updatePartial(String(id), updates);
-        new LogService({
  
-        user_id:req.user?.id,
-        event_type:"update",
-        description:updatedIntegration,
-        company_id: req.user?.company_id});
-
-      return res.status(200).json({
-        message: 'Integration atualizado com sucesso.',
-        data: updatedIntegration,
-      });
-    } catch (err: any) {
-      return res.status(500).json({ error: err.message });
-    }
-  }
-
 }
 
 export default new IntegrationController();

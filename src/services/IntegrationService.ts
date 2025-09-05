@@ -4,7 +4,7 @@ import { Integration } from '../interface/Integration';
 class IntegrationService {
   private table = 'integration';
 
-  async create(systemData: Integration): Promise<Integration> {
+  async create(systemData: any): Promise<Integration> {
 
     const { data, error } = await supabase
       .from(this.table)

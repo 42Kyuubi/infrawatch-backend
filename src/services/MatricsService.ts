@@ -1,7 +1,5 @@
 import supabase from '../infra/supabase/connect';
-import { DataMetrics } from '../interface/Metric';
-import { System } from '../interface/System';
-
+import { DataMetrics } from '../interface/Metric'; 
 class MatricsService {
   private table = 'metrics';
 

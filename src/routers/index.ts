@@ -6,7 +6,7 @@ import systemRouter from "./system.routes";
 import streamRouter from "./stream.route";
 import alertRouter from "./alerts.route";
 import { startSystemWatcher } from "../controllers/AlertController";
-import integrationsRouter from "./integrations.routes";
+import {integrationsRouter,  integrationsAgentRouter } from "./integrations.routes";
 const routers = Router();
 
 routers.get("/",(req, res)=>{
@@ -17,7 +17,9 @@ startSystemWatcher();
 routers.use("/stream", streamRouter);
 routers.use("/auth", authRouter);
 routers.use("/alerts", alertRouter);
-routers.use("/integrations", integrationsRouter);
+routers.use("/integrations/agents", integrationsAgentRouter);
+
+routers.use("/integrations", authMiddleware, integrationsRouter);
 routers.use("/users",authMiddleware, userRouter);
 routers.use("/systems",authMiddleware, systemRouter);
 
