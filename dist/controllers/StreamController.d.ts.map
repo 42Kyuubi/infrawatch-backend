@@ -1,0 +1,1 @@
+{"version":3,"file":"StreamController.d.ts","sourceRoot":"","sources":["../../src/controllers/StreamController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAI5C,cAAM,gBAAgB;IAEhB,wBAAwB,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ;IAqCnD,gBAAgB,CAAC,GAAG,EAAE,OAAO,EAAE,GAAG,EAAE,QAAQ;CAyBlD;;AAED,wBAAsC"}
