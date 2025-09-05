@@ -7,6 +7,7 @@ exports.integrationsAgentRouter = exports.integrationsRouter = void 0;
 const express_1 = require("express");
 const IntegrationController_1 = __importDefault(require("../controllers/IntegrationController"));
 const AgentController_1 = __importDefault(require("../controllers/AgentController"));
+const TypeSystemController_1 = __importDefault(require("../controllers/TypeSystemController"));
 const integrationsRouter = (0, express_1.Router)();
 exports.integrationsRouter = integrationsRouter;
 integrationsRouter.get("/", IntegrationController_1.default.getAll);
@@ -17,4 +18,5 @@ exports.integrationsAgentRouter = integrationsAgentRouter;
 integrationsAgentRouter.post("/", AgentController_1.default.validationAgent);
 integrationsAgentRouter.get("/:agent/systems", AgentController_1.default.getSystemAllByAgent);
 integrationsAgentRouter.post("/:agent/systems", AgentController_1.default.createAgentSystem);
+integrationsAgentRouter.get("/:agent/systems/types", TypeSystemController_1.default.getAll);
 //# sourceMappingURL=integrations.routes.js.map
