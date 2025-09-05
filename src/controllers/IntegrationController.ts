@@ -14,6 +14,7 @@ class IntegrationController {
      API_URL: parsed.api_url, 
      AUTH_TOKEN: parsed.auth_token,
      status:'inative',
+     id_company:req.user?.company_id
     }    
      
     try {
@@ -35,13 +36,11 @@ class IntegrationController {
         system: Integration,
       });
     } catch (err: any) {
-
          new LogService({
         user_id:req.user?.id,
         event_type:"error",
         description:err.message,
         company_id: req.user?.company_id});
-
       return res.status(400).json({ error: err.message });
     }
   }

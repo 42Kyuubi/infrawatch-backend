@@ -5,5 +5,6 @@ const streamRouter = Router();
 
 streamRouter.get("/systems", StreamController.streamSystemsWithMetrics);
 streamRouter.get("/metrcis", StreamController.streamMetricsAll);
+streamRouter.get("/integrations", StreamController.streamIntegrationsAll);
 
 export default streamRouter;

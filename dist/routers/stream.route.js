@@ -8,5 +8,6 @@ const StreamController_1 = __importDefault(require("../controllers/StreamControl
 const streamRouter = (0, express_1.Router)();
 streamRouter.get("/systems", StreamController_1.default.streamSystemsWithMetrics);
 streamRouter.get("/metrcis", StreamController_1.default.streamMetricsAll);
+streamRouter.get("/integrations", StreamController_1.default.streamIntegrationsAll);
 exports.default = streamRouter;
 //# sourceMappingURL=stream.route.js.map

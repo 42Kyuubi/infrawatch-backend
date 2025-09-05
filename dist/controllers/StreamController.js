@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const SystemService_1 = __importDefault(require("../services/SystemService"));
 const MatricsService_1 = __importDefault(require("../services/MatricsService"));
+const IntegrationService_1 = __importDefault(require("../services/IntegrationService"));
 class StreamController {
     async streamSystemsWithMetrics(req, res) {
         try {
@@ -46,6 +47,28 @@ class StreamController {
             res.write(`data: ${JSON.stringify(systems)}\n\n`);
             const interval = setInterval(async () => {
                 const systems = await MatricsService_1.default.getAll();
+                res.write(`data: ${JSON.stringify(systems)}\n\n`);
+            }, 1000);
+            req.on("close", () => {
+                clearInterval(interval);
+                res.end();
+            });
+        }
+        catch (err) {
+            console.error("SSE error:", err);
+            res.end();
+        }
+    }
+    async streamIntegrationsAll(req, res) {
+        try {
+            res.setHeader("Content-Type", "text/event-stream");
+            res.setHeader("Cache-Control", "no-cache");
+            res.setHeader("Connection", "keep-alive");
+            res.flushHeaders();
+            const systems = await IntegrationService_1.default.getAll();
+            res.write(`data: ${JSON.stringify(systems)}\n\n`);
+            const interval = setInterval(async () => {
+                const systems = await IntegrationService_1.default.getAll();
                 res.write(`data: ${JSON.stringify(systems)}\n\n`);
             }, 1000);
             req.on("close", () => {

@@ -16,6 +16,7 @@ class IntegrationController {
             API_URL: parsed.api_url,
             AUTH_TOKEN: parsed.auth_token,
             status: 'inative',
+            id_company: req.user?.company_id
         };
         try {
             const Integration = await IntegrationService_1.default.create(data);

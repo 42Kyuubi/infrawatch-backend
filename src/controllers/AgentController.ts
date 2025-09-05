@@ -12,7 +12,7 @@ class AgentController
       const data = {
         token:parsed.token,
         region:parsed.region,
-        cod_agent:parsed.cod_agent,
+        cod_agent:parsed.code_agent,
         country:parsed.country,
         city:parsed.city,
         latitude:parsed.latitude,
