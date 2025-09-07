@@ -73,16 +73,13 @@ class SystemController {
             res.setHeader("Content-Type", "text/event-stream");
             res.setHeader("Cache-Control", "no-cache");
             res.setHeader("Connection", "keep-alive");
-            res.flushHeaders(); // envia headers imediatamente
-            // exemplo: envia os dados atuais
+            res.flushHeaders();
             const systems = await SystemService_1.default.getAll();
             res.write(`data: ${JSON.stringify(systems)}\n\n`);
-            // exemplo: envia atualização a cada 10s
             const interval = setInterval(async () => {
                 const systems = await SystemService_1.default.getAll();
                 res.write(`data: ${JSON.stringify(systems)}\n\n`);
             }, 1000);
-            // fecha a conexão quando o cliente desconecta
             req.on("close", () => {
                 clearInterval(interval);
                 res.end();

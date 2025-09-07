@@ -3,6 +3,8 @@ import IntegrationService from "../services/IntegrationService";
 import LogService from "../services/LogService";
 import SystemService from "../services/SystemService";
 import AgentService from '../services/AgentService';
+import MatricsService from '../services/MatricsService';
+import supabase from '../infra/supabase/connect';
 
 class AgentController 
 {
@@ -93,7 +95,10 @@ class AgentController
           created_at:  parsed.dataTime,
           target: parsed.target, 
           company_id:parsed.company_id,
-          agent: parsed.idAgent
+          agent: parsed.idAgent,
+          criticality_level:"critical",
+          lat:parsed.lat,
+          lng:parsed.lng
         }    
          
         try {
@@ -122,6 +127,79 @@ class AgentController
       }
     
     async getSystemAllByAgent(req: Request, res: Response): Promise<Response> {
+        try {
+            const { agent } = req.params;
+            if(!agent)
+                 return res.status(500).json({ error: "Token Invalido!" });
+
+            const integrations = await AgentService.getAllByAgent(agent);
+
+            return res.status(200).json({
+            message: `Lista de sistemas do agente ${agent}.`,
+            data: integrations,
+            });
+        } catch (err: any) {
+            return res.status(500).json({ error: err.message });
+        }
+    }
+
+  async createAgentMetrics(req: Request, res: Response): Promise<Response> {
+      const parsed = req.body;
+
+      try {
+        const { data: system, error: systemError } = await supabase
+          .from("systems")
+          .select("id")
+          .eq("id_system_agent", parsed.id)
+          .single();
+
+        if (systemError || !system) {
+          return res.status(404).json({
+            message: `Nenhum sistema encontrado com id_system_agent = ${parsed.id}`,
+          });
+        }
+
+        const data: any = {
+          system_id: system.id,
+          status: parsed.status,
+          uptime_percent: parsed.uptimePercent,
+          downtime_minutes: parsed.downtimeMinutes,
+          sla_percent: 98,
+          value: {
+            ram:parsed.ram,
+            cpu:parsed.cpu,
+            disk:parsed.disk,
+            latency: parsed.latency ?? null,
+            packetLoss: parsed.packetLoss ?? null,
+          },
+          last_check: parsed.lastCheck,
+        };
+        
+        const metrics:any = await MatricsService.create(data);
+
+        new LogService({
+          user_id: req.user?.id,
+          event_type: "create",
+          description: `Upload de sistemas do Agent ${metrics.id}`,
+          company_id: req.user?.company_id,
+        });
+
+        return res.status(201).json({
+          message: "Sistema do Agent cadastrado com sucesso.",
+          system: metrics,
+        });
+      } catch (err: any) {
+        new LogService({
+          user_id: req.user?.id,
+          event_type: "error",
+          description: err.message,
+          company_id: req.user?.company_id,
+        });
+        return res.status(400).json({ error: err.message });
+      }
+  }
+    
+    async getMetricsAllByAgent(req: Request, res: Response): Promise<Response> {
         try {
             const { agent } = req.params;
             if(!agent)

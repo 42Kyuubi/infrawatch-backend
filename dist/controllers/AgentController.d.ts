@@ -3,6 +3,8 @@ declare class AgentController {
     validationAgent(req: Request, res: Response): Promise<Response>;
     createAgentSystem(req: Request, res: Response): Promise<Response>;
     getSystemAllByAgent(req: Request, res: Response): Promise<Response>;
+    createAgentMetrics(req: Request, res: Response): Promise<Response>;
+    getMetricsAllByAgent(req: Request, res: Response): Promise<Response>;
 }
 declare const _default: AgentController;
 export default _default;

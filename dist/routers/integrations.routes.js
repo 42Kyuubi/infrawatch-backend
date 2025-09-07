@@ -19,4 +19,5 @@ integrationsAgentRouter.post("/", AgentController_1.default.validationAgent);
 integrationsAgentRouter.get("/:agent/systems", AgentController_1.default.getSystemAllByAgent);
 integrationsAgentRouter.post("/:agent/systems", AgentController_1.default.createAgentSystem);
 integrationsAgentRouter.get("/:agent/systems/types", TypeSystemController_1.default.getAll);
+integrationsAgentRouter.patch("/:agent/metrics", AgentController_1.default.createAgentMetrics);
 //# sourceMappingURL=integrations.routes.js.map

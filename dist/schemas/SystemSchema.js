@@ -21,6 +21,8 @@ exports.SystemSchema = zod_1.z.object({
         .refine((n) => Number.isInteger(n) && n > 0, {
         message: "check_interval must be a positive integer (seconds)",
     }),
+    lat: zod_1.z.number(),
+    lng: zod_1.z.number()
 });
 exports.typeSystemSchema = zod_1.z.object({
     name: zod_1.z.string().min(1, "Nome é obrigatório")

@@ -5,11 +5,11 @@ export interface DataMetrics {
     downtime_minutes: number;
     sla_percent: number;
     value: {
-        response_time: number | null;
-        error_message: string | null;
-        output: string | null;
+        ram: null;
+        cpu: null;
+        disk: null;
+        packetLoss: 0;
         latency: number | null;
-        packetLoss: number | null;
     };
     last_check: string;
 }

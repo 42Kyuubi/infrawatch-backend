@@ -14,5 +14,6 @@ integrationsAgentRouter.post("/",AgentController.validationAgent);
 integrationsAgentRouter.get("/:agent/systems",AgentController.getSystemAllByAgent); 
 integrationsAgentRouter.post("/:agent/systems",AgentController.createAgentSystem); 
 integrationsAgentRouter.get("/:agent/systems/types", TypeSystemController.getAll); 
+integrationsAgentRouter.patch("/:agent/metrics", AgentController.createAgentMetrics); 
 
 export {integrationsRouter,integrationsAgentRouter} ;

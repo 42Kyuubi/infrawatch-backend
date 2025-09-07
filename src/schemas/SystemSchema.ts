@@ -20,6 +20,8 @@ export const SystemSchema = z.object({
     .refine((n) => Number.isInteger(n) && n > 0, {
       message: "check_interval must be a positive integer (seconds)",
     }),
+      lat: z.number(),
+      lng: z.number()
 });
 
 export const typeSystemSchema = z.object({

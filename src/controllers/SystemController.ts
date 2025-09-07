@@ -8,6 +8,7 @@ class SystemController {
   async create(req: Request, res: Response): Promise<Response> {
     const parsed = SystemSchema.safeParse(req.body);
 
+    
     if (!parsed.success) {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
@@ -76,19 +77,16 @@ class SystemController {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
-    res.flushHeaders(); // envia headers imediatamente
+    res.flushHeaders();
 
-    // exemplo: envia os dados atuais
     const systems = await SystemService.getAll();
     res.write(`data: ${JSON.stringify(systems)}\n\n`);
 
-    // exemplo: envia atualização a cada 10s
     const interval = setInterval(async () => {
       const systems = await SystemService.getAll();
       res.write(`data: ${JSON.stringify(systems)}\n\n`);
     }, 1000);
 
-    // fecha a conexão quando o cliente desconecta
     req.on("close", () => {
       clearInterval(interval);
       res.end();

@@ -22,6 +22,8 @@ export declare const SystemSchema: z.ZodObject<{
     }>;
     sla_target: z.ZodNumber;
     check_interval: z.ZodNumber;
+    lat: z.ZodNumber;
+    lng: z.ZodNumber;
 }, z.core.$strip>;
 export declare const typeSystemSchema: z.ZodObject<{
     name: z.ZodString;
