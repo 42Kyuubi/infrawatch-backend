@@ -165,13 +165,7 @@ async createAgentMetrics(req: Request, res: Response): Promise<Response> {
       uptime_percent: parsed.uptime_percent,
       downtime_minutes: parsed.downtime_minutes,
       sla_percent: 98,
-      value: {
-        ram: parsed.value.ram,
-        cpu: parsed.value.cpu,
-        disk: parsed.value.disk,
-        latency: parsed.value.latency ?? null,
-        packetLoss: parsed.value.packetLoss ?? null,
-      },
+      value: parsed.value,
       last_check: parsed.lastCheck,
     };
  

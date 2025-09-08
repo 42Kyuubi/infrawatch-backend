@@ -145,13 +145,7 @@ class AgentController {
                 uptime_percent: parsed.uptime_percent,
                 downtime_minutes: parsed.downtime_minutes,
                 sla_percent: 98,
-                value: {
-                    ram: parsed.ram,
-                    cpu: parsed.cpu,
-                    disk: parsed.disk,
-                    latency: parsed.latency ?? null,
-                    packetLoss: parsed.packetLoss ?? null,
-                },
+                value: parsed.value,
                 last_check: parsed.lastCheck,
             };
             const { data: existingMetric, error: metricError } = await connect_1.default
