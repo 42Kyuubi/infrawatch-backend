@@ -166,14 +166,15 @@ async createAgentMetrics(req: Request, res: Response): Promise<Response> {
       downtime_minutes: parsed.downtime_minutes,
       sla_percent: 98,
       value: {
-        ram: parsed.ram,
-        cpu: parsed.cpu,
-        disk: parsed.disk,
-        latency: parsed.latency ?? null,
-        packetLoss: parsed.packetLoss ?? null,
+        ram: parsed.value.ram,
+        cpu: parsed.value.cpu,
+        disk: parsed.value.disk,
+        latency: parsed.value.latency ?? null,
+        packetLoss: parsed.value.packetLoss ?? null,
       },
       last_check: parsed.lastCheck,
     };
+ 
 
     const { data: existingMetric, error: metricError } = await supabase
       .from("metrics")
