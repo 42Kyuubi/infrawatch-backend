@@ -7,7 +7,6 @@ const IntegrationService_1 = __importDefault(require("../services/IntegrationSer
 const LogService_1 = __importDefault(require("../services/LogService"));
 const SystemService_1 = __importDefault(require("../services/SystemService"));
 const AgentService_1 = __importDefault(require("../services/AgentService"));
-const MatricsService_1 = __importDefault(require("../services/MatricsService"));
 const connect_1 = __importDefault(require("../infra/supabase/connect"));
 class AgentController {
     async validationAgent(req, res) {
@@ -133,18 +132,18 @@ class AgentController {
             const { data: system, error: systemError } = await connect_1.default
                 .from("systems")
                 .select("id")
-                .eq("id_system_agent", parsed.id)
+                .eq("id_system_aget", parsed.system_id)
                 .single();
             if (systemError || !system) {
                 return res.status(404).json({
-                    message: `Nenhum sistema encontrado com id_system_agent = ${parsed.id}`,
+                    message: `Nenhum sistema encontrado com id_system_aget = ${parsed.system_id}`,
                 });
             }
             const data = {
                 system_id: system.id,
                 status: parsed.status,
-                uptime_percent: parsed.uptimePercent,
-                downtime_minutes: parsed.downtimeMinutes,
+                uptime_percent: parsed.uptime_percent,
+                downtime_minutes: parsed.downtime_minutes,
                 sla_percent: 98,
                 value: {
                     ram: parsed.ram,
@@ -155,15 +154,41 @@ class AgentController {
                 },
                 last_check: parsed.lastCheck,
             };
-            const metrics = await MatricsService_1.default.create(data);
+            const { data: existingMetric, error: metricError } = await connect_1.default
+                .from("metrics")
+                .select("*")
+                .eq("system_id", system.id)
+                .single();
+            let metrics;
+            if (existingMetric) {
+                const { data: updated, error: updateError } = await connect_1.default
+                    .from("metrics")
+                    .update(data)
+                    .eq("system_id", system.id)
+                    .select()
+                    .single();
+                if (updateError)
+                    throw new Error(updateError.message);
+                metrics = updated;
+            }
+            else {
+                const { data: created, error: createError } = await connect_1.default
+                    .from("metrics")
+                    .insert(data)
+                    .select()
+                    .single();
+                if (createError)
+                    throw new Error(createError.message);
+                metrics = created;
+            }
             new LogService_1.default({
                 user_id: req.user?.id,
-                event_type: "create",
-                description: `Upload de sistemas do Agent ${metrics.id}`,
+                event_type: existingMetric ? "update" : "create",
+                description: `${existingMetric ? "Atualização" : "Upload"} de sistemas do Agent ${metrics.id}`,
                 company_id: req.user?.company_id,
             });
-            return res.status(201).json({
-                message: "Sistema do Agent cadastrado com sucesso.",
+            return res.status(existingMetric ? 200 : 201).json({
+                message: `Sistema do Agent ${existingMetric ? "atualizado" : "cadastrado"} com sucesso.`,
                 system: metrics,
             });
         }

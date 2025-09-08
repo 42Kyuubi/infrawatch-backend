@@ -143,61 +143,89 @@ class AgentController
         }
     }
 
-  async createAgentMetrics(req: Request, res: Response): Promise<Response> {
-      const parsed = req.body;
+async createAgentMetrics(req: Request, res: Response): Promise<Response> {
+  const parsed = req.body;
 
-      try {
-        const { data: system, error: systemError } = await supabase
-          .from("systems")
-          .select("id")
-          .eq("id_system_agent", parsed.id)
-          .single();
+  try {
+    const { data: system, error: systemError } = await supabase
+      .from("systems")
+      .select("id")
+      .eq("id_system_aget", parsed.system_id)
+      .single();
 
-        if (systemError || !system) {
-          return res.status(404).json({
-            message: `Nenhum sistema encontrado com id_system_agent = ${parsed.id}`,
-          });
-        }
+    if (systemError || !system) {
+      return res.status(404).json({
+        message: `Nenhum sistema encontrado com id_system_aget = ${parsed.system_id}`,
+      });
+    }
 
-        const data: any = {
-          system_id: system.id,
-          status: parsed.status,
-          uptime_percent: parsed.uptimePercent,
-          downtime_minutes: parsed.downtimeMinutes,
-          sla_percent: 98,
-          value: {
-            ram:parsed.ram,
-            cpu:parsed.cpu,
-            disk:parsed.disk,
-            latency: parsed.latency ?? null,
-            packetLoss: parsed.packetLoss ?? null,
-          },
-          last_check: parsed.lastCheck,
-        };
-        
-        const metrics:any = await MatricsService.create(data);
+    const data: any = {
+      system_id: system.id,
+      status: parsed.status,
+      uptime_percent: parsed.uptime_percent,
+      downtime_minutes: parsed.downtime_minutes,
+      sla_percent: 98,
+      value: {
+        ram: parsed.ram,
+        cpu: parsed.cpu,
+        disk: parsed.disk,
+        latency: parsed.latency ?? null,
+        packetLoss: parsed.packetLoss ?? null,
+      },
+      last_check: parsed.lastCheck,
+    };
 
-        new LogService({
-          user_id: req.user?.id,
-          event_type: "create",
-          description: `Upload de sistemas do Agent ${metrics.id}`,
-          company_id: req.user?.company_id,
-        });
+    const { data: existingMetric, error: metricError } = await supabase
+      .from("metrics")
+      .select("*")
+      .eq("system_id", system.id)
+      .single();
 
-        return res.status(201).json({
-          message: "Sistema do Agent cadastrado com sucesso.",
-          system: metrics,
-        });
-      } catch (err: any) {
-        new LogService({
-          user_id: req.user?.id,
-          event_type: "error",
-          description: err.message,
-          company_id: req.user?.company_id,
-        });
-        return res.status(400).json({ error: err.message });
-      }
+    let metrics: any;
+
+    if (existingMetric) {
+      const { data: updated, error: updateError } = await supabase
+        .from("metrics")
+        .update(data)
+        .eq("system_id", system.id)
+        .select()
+        .single();
+
+      if (updateError) throw new Error(updateError.message);
+      metrics = updated;
+    } else {
+      const { data: created, error: createError } = await supabase
+        .from("metrics")
+        .insert(data)
+        .select()
+        .single();
+
+      if (createError) throw new Error(createError.message);
+      metrics = created;
+    }
+
+    new LogService({
+      user_id: req.user?.id,
+      event_type: existingMetric ? "update" : "create",
+      description: `${existingMetric ? "Atualização" : "Upload"} de sistemas do Agent ${metrics.id}`,
+      company_id: req.user?.company_id,
+    });
+
+    return res.status(existingMetric ? 200 : 201).json({
+      message: `Sistema do Agent ${existingMetric ? "atualizado" : "cadastrado"} com sucesso.`,
+      system: metrics,
+    });
+  } catch (err: any) {
+    new LogService({
+      user_id: req.user?.id,
+      event_type: "error",
+      description: err.message,
+      company_id: req.user?.company_id,
+    });
+    return res.status(400).json({ error: err.message });
   }
+}
+
     
     async getMetricsAllByAgent(req: Request, res: Response): Promise<Response> {
         try {

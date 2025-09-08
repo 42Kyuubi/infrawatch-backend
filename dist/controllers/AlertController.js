@@ -32,6 +32,7 @@ async function startSystemWatcher() {
                         downSince: new Date().toISOString(),
                         emailTo: user?.email
                     });
+                    console.log(user?.email);
                     notifiedSystems.add(system.id);
                     new LogService_1.default({
                         system_id: system.id,
