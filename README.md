@@ -25,9 +25,8 @@ Entregar uma plataforma de monitoramento moderna e escalável que permita:
 
 O backend é construído para ser **modular e escalável**:
 
-* **API REST/GraphQL** → fornece endpoints seguros para frontend, dashboards e integrações.
+* **API REST** → fornece endpoints seguros para frontend, dashboards e integrações.
 * **Engine de monitoramento** → executa verificações de agentes e polling.
-* **Fila de mensagens** (opcional) → processa métricas em tempo real de forma distribuída.
 * **Banco de dados** → armazena métricas, alertas, configurações e tenants.
 * **Módulo de autenticação multi-tenant** → garante isolamento entre organizações.
 
