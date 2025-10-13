@@ -6,8 +6,8 @@ const userRouter = Router();
 
 userRouter.get("/",userController.getAll);
 userRouter.get("/:id",userController.getById);
-userRouter.post("/create",permissionAdminMiddleware,userController.create);
-userRouter.delete("/:id",permissionAdminMiddleware,userController.delete);
-userRouter.patch("/:id",permissionAdminMiddleware, userController.patch);
+userRouter.post("/create",userController.create);
+userRouter.delete("/:id",/*permissionAdminMiddleware,*/userController.delete);
+userRouter.patch("/:id",/*permissionAdminMiddleware,*/ userController.patch);
 
 export default userRouter;

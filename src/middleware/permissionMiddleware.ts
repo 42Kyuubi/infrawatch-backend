@@ -8,7 +8,11 @@ import { Request, Response, NextFunction } from 'express';
 }
 
  async function permissionAdminMiddleware(req: Request, res: Response, next: NextFunction) {
+
+
+  
   if (req.user?.role != "admin") {
+    console.log(req.user);
     return res.status(401).json({ message: 'Acesso Negado!  Não tens permissão' });
   }
   next();

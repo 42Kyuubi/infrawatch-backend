@@ -12,12 +12,11 @@ class UserController {
       const errors = parsed.error.format();
       return res.status(400).json({ errors });
     }
-    
     const userData:User = {
          company_id:req.user?.company_id,
           ...parsed.data,
     }
-
+ 
     try {
       const user = await UserService.create(userData);
       new LogService({

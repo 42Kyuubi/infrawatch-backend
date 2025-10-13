@@ -10,6 +10,7 @@ async function permissionMiddleware(req, res, next) {
 }
 async function permissionAdminMiddleware(req, res, next) {
     if (req.user?.role != "admin") {
+        console.log(req.user);
         return res.status(401).json({ message: 'Acesso Negado!  Não tens permissão' });
     }
     next();
