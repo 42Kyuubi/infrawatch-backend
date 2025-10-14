@@ -18,6 +18,7 @@ declare class AuthService {
         user: {
             id: string;
             email: string | undefined;
+            role: string | undefined;
         };
     }>;
     refresh(refresh_token: string): Promise<{

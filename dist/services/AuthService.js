@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const connect_1 = __importDefault(require("../infra/supabase/connect"));
+const UserService_1 = __importDefault(require("./UserService"));
 class AuthService {
     async signUp({ username, email, password }) {
         const { data, error } = await connect_1.default.auth.signUp({
@@ -27,6 +28,7 @@ class AuthService {
         if (error) {
             throw new Error("Credenciais inválidas");
         }
+        const dataUser = await UserService_1.default.getById(String(data.user?.id));
         return {
             access_token: data.session.access_token,
             refresh_token: data.session.refresh_token,
@@ -34,6 +36,7 @@ class AuthService {
             user: {
                 id: data.user.id,
                 email: data.user.email,
+                role: dataUser?.role
             },
         };
     }
