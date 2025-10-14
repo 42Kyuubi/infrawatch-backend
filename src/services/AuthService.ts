@@ -1,4 +1,6 @@
+import da from 'zod/v4/locales/da.js';
 import supabase from '../infra/supabase/connect';
+import UserService from './UserService';
 
 interface SignUpInput {
   username: string;
@@ -38,6 +40,7 @@ class AuthService {
     throw new Error("Credenciais inválidas");
   }
 
+    const dataUser = await UserService.getById(String(data.user?.id));
     return {
       access_token: data.session.access_token,
       refresh_token: data.session.refresh_token,
@@ -45,6 +48,7 @@ class AuthService {
       user: {
         id: data.user.id,
         email: data.user.email,
+        role: dataUser?.role
       },
     };
   }
