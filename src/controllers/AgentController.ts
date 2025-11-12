@@ -96,10 +96,12 @@ class AgentController
           target: parsed.target, 
           company_id:parsed.company_id,
           agent: parsed.idAgent,
-          criticality_level:"critical",
+          criticality_level:"critical", 
           lat:parsed.lat,
           lng:parsed.lng
         }    
+
+        console.log(data);
          
         try {
           const Integration = await SystemService.create(data);

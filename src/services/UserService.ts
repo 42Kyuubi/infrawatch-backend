@@ -26,7 +26,7 @@ class UserService
         password_hash: await passwordHash(password),
         role,
         company_id,
-        status:'active'
+        status:'registered'
       })
       .select('*')
       .single();
@@ -34,7 +34,7 @@ class UserService
     if (error) {
       await supabase.auth.admin.deleteUser(userId);
       throw new Error(`Failed to create user in DB: ${error.message}`);
-    }
+    } 
 
     return data as UserDTO;
   }
@@ -76,14 +76,14 @@ class UserService
   }
 
 async updatePartial(id: string, updateData: Partial<User>): Promise<UserDTO> {
-  const { email, password, username, ...tableFields } = updateData;
+  const { email, password, username,status, ...tableFields } = updateData;
 
   let updatedUser: any = {};
 
   // Dados que vão para o Supabase Auth
   const authUpdateData: any = {
     ...(email && { email }),
-    ...(password && { password }),
+    ...(password && { password }), 
     ...(username && { user_metadata: { display_name: username } })
   };
 
@@ -98,13 +98,14 @@ async updatePartial(id: string, updateData: Partial<User>): Promise<UserDTO> {
     updatedUser = { ...updatedUser, ...authData.user };
   }
 
-  if (Object.keys(tableFields).length > 0 || email || username || password) {
+  if (Object.keys(tableFields).length > 0 || email || username || password || status) {
     const { data: dbData, error: dbError } = await supabase
       .from(this.table)
       .update({
         ...tableFields,
         ...(email && { email }),
         ...(username && { username }),
+        ...(status && { status }),
         ...(password && { password_hash: await passwordHash(password) }),
       })
       .eq('id', id)
@@ -120,6 +121,32 @@ async updatePartial(id: string, updateData: Partial<User>): Promise<UserDTO> {
 
   return updatedUser as UserDTO;
 }
+
+async resetPassword(userId: string, newPassword: string): Promise<void> {
+
+    const { error: authError } = await supabase.auth.admin.updateUserById(userId, {
+      password: newPassword,
+    });
+
+    if (authError) {
+      throw new Error(`Erro ao atualizar senha no Auth: ${authError.message}`);
+    }
+
+    const { error: dbError } = await supabase
+      .from(this.table)
+      .update({
+        password_hash: await passwordHash(newPassword),
+        updated_at: new Date(),
+        status:"active"
+      })
+      .eq('id', userId);
+
+    if (dbError) {
+      throw new Error(`Erro ao atualizar senha no banco: ${dbError.message}`);
+    }
+}
+
+
 }
 
 export default new UserService();

@@ -1,12 +1,14 @@
 import {Router} from "express";
 import authRouter from "./auth.route";
 import userRouter from "./user.route";
+import userController from "../controllers/UserController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import systemRouter from "./system.routes";   
 import streamRouter from "./stream.route";
 import alertRouter from "./alerts.route";
 import { startSystemWatcher } from "../controllers/AlertController";
 import {integrationsRouter,  integrationsAgentRouter } from "./integrations.routes";
+import reportsRouter from "./reports.route";
 const routers = Router();
 
 routers.get("/",(req, res)=>{
@@ -21,7 +23,10 @@ routers.use("/integrations/agents", integrationsAgentRouter);
 
 routers.use("/integrations", authMiddleware, integrationsRouter);
 routers.use("/users",authMiddleware, userRouter);
+routers.use("/reports",authMiddleware, reportsRouter);
 routers.use("/systems",authMiddleware, systemRouter);
+
+
 
 
 export default routers;

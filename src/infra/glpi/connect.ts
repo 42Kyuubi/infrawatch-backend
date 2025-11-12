@@ -1,7 +1,7 @@
 import axios from "axios";
 import supabase from "../supabase/connect";
 
-const CONTENT_TYPE = "application/json";
+const CONTENT_TYPE = "Content-Type: application/json";
 const APP_TOKEN_HEADER = "App-Token";
 const AUTH_HEADER = "Authorization";
 const AUTH_SESSION_ENDPOINT = "initSession/";
@@ -12,9 +12,9 @@ const KILL_SESSION_ENDPOINT = "killSession";
 export async function createTicket(ticketData:any) {
 
      const { data, error } = await supabase
-    .from("integrations")
+    .from("integration")
     .select("*")
-    .eq("type", "GLPI")
+    .eq("type", "GPLI")
     .single();  
 
   if (error) {
@@ -35,7 +35,7 @@ export async function createTicket(ticketData:any) {
       [AUTH_HEADER]: `user_token ${authToken}`,
     };
 
-    const sessionRes = await axios.get(apiUrl + AUTH_SESSION_ENDPOINT, {
+    const sessionRes = await axios.get("http://localhost:8080/apirest.php/" + AUTH_SESSION_ENDPOINT, {
       headers: headersAuth,
     });
     sessionToken = sessionRes.data.session_token;
@@ -62,10 +62,6 @@ export async function createTicket(ticketData:any) {
       headers,
     });
     console.log("Ticket Created:", createRes.data);
-
- 
-    const ticketsRes = await axios.get(apiUrl + TICKET_ENDPOINT, { headers });
-    console.log("Tickets:", JSON.stringify(ticketsRes.data, null, 2));
 
  
     console.log(`### Killing actual session (${sessionToken}) ###`);

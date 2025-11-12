@@ -9,5 +9,6 @@ userRouter.get("/:id",userController.getById);
 userRouter.post("/create",userController.create);
 userRouter.delete("/:id",/*permissionAdminMiddleware,*/userController.delete);
 userRouter.patch("/:id",/*permissionAdminMiddleware,*/ userController.patch);
+userRouter.patch("/reset/password",/*permissionAdminMiddleware,*/ userController.resetPassword);
 
 export default userRouter;

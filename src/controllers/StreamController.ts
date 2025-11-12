@@ -13,17 +13,22 @@ async streamSystemsWithMetrics(req: Request, res: Response) {
     res.flushHeaders();
 
     const sendData = async () => {
-      const systems = await SystemService.getAll();
-      const metrics = await MatricsService.getAll();
+      try {
+        const systems = await SystemService.getAll();
+        const metrics = await MatricsService.getAll();
 
-      // junta métricas dentro de cada sistema
-      const enriched = systems.map((sys) => {
-        const metric = metrics.find((m) => m.system_id === sys.id);
-        return { ...sys, metric: metric || null };
-      });
+        const enriched = systems.map((sys) => {
+          const metric = metrics.find((m) => m.system_id === sys.id);
+          return { ...sys, metric: metric || null };
+        });
 
-      res.write(`data: ${JSON.stringify(enriched)}\n\n`);
+        res.write(`data: ${JSON.stringify(enriched)}\n\n`);
+      } catch (error) {
+        console.error("[SSE ERROR] Failed to send data:", error);
+        res.write(`event: error\ndata: ${JSON.stringify({ message: "Failed to fetch data" })}\n\n`);
+      }
     };
+
 
     // primeira resposta
     await sendData();

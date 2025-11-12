@@ -30,28 +30,42 @@ class AuthService {
     };
   }
 
-  async signIn({ email, password }: SignInInput) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+async signIn({ email, password }: SignInInput) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) {
+  if (error) {
     throw new Error("Credenciais inválidas");
   }
 
-    const dataUser = await UserService.getById(String(data.user?.id));
-    return {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_in: data.session.expires_in,
-      user: {
-        id: data.user.id,
-        email: data.user.email,
-        role: dataUser?.role
-      },
-    };
+  if (!data?.user) {
+    throw new Error("Usuário não encontrado");
   }
+
+  if (!data.user.email_confirmed_at) {
+    throw new Error("E-mail não confirmado. Verifique sua caixa de entrada.");
+  }
+
+  const dataUser = await UserService.getById(String(data.user.id));
+
+  if (!dataUser) {
+    throw new Error("Usuário não encontrado no sistema");
+  }
+
+  return {
+    access_token: data.session?.access_token,
+    refresh_token: data.session?.refresh_token,
+    expires_in: data.session?.expires_in,
+    user: {
+      id: data.user.id,
+      email: data.user.email,
+      role: dataUser.role,
+      status: dataUser.status,
+    },
+  };
+}
 
   async refresh(refresh_token: string) {
     const { data, error } = await supabase.auth.refreshSession({

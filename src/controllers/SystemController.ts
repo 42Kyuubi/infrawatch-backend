@@ -3,6 +3,7 @@ import { SystemSchema } from '../schemas/SystemSchema';
 import SystemService from '../services/SystemService';
 import LogService from '../services/LogService';
 
+
 class SystemController {
 
   async create(req: Request, res: Response): Promise<Response> {

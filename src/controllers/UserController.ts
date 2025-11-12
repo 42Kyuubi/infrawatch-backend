@@ -13,8 +13,9 @@ class UserController {
       return res.status(400).json({ errors });
     }
     const userData:User = {
-         company_id:req.user?.company_id,
-          ...parsed.data,
+      company_id: req.user?.company_id,
+      ...parsed.data,
+      status: "registered"
     }
  
     try {
@@ -109,6 +110,26 @@ class UserController {
       return res.status(500).json({ error: err.message });
     }
   }
+
+  async resetPassword(req: Request, res: Response): Promise<Response> {
+    const { user_id, new_password } = req.body;
+
+    if (!user_id || !new_password) {
+      return res.status(400).json({
+        error: 'O ID do usuário e a nova senha são obrigatórios.',
+      });
+    }
+
+    try {
+      await UserService.resetPassword(user_id, new_password);
+      return res.status(200).json({
+        message: 'Senha redefinida com sucesso.',
+      });
+    } catch (err: any) {
+      return res.status(400).json({ error: err.message });
+    }
+}
+
 }
  
 export default new UserController();

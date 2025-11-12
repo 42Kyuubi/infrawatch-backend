@@ -1,6 +1,7 @@
 import supabase from '../infra/supabase/connect';
 import { System } from '../interface/System';
 
+
 class SystemService {
   private table = 'systems';
 
